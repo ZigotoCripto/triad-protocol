@@ -97,7 +97,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
 
     let price_impact = (((net_amount as f64) / (current_liquidity as f64)) *
         (current_price as f64) *
-        0.1) as u64;
+        0.693) as u64;
 
     let future_price = match args.direction {
         OrderDirection::Hype => {
