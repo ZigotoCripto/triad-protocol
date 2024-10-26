@@ -76,7 +76,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
 
     let price_impact = (((current_amount as f64) / (current_liquidity as f64)) *
         (current_price as f64) *
-        0.693) as u64;
+        0.1) as u64;
 
     let future_price = match order.direction {
         OrderDirection::Hype => {
