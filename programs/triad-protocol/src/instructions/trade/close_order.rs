@@ -72,7 +72,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
 
     require!(current_liquidity > 0, TriadProtocolError::InsufficientLiquidity);
 
-    let current_amount = (order.total_shares * current_price) / 1_000_000;
+    let mut current_amount = (order.total_shares * current_price) / 1_000_000;
 
     let price_impact = (((current_amount as f64) / (current_liquidity as f64)) *
         (current_price as f64)) as u64;
@@ -100,7 +100,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
 
     new_price = new_price.clamp(1, 999_999);
 
-    let current_amount = (order.total_shares * new_price) / 1_000_000;
+    current_amount = (order.total_shares * new_price) / 1_000_000;
 
     require!(current_liquidity > current_amount, TriadProtocolError::InsufficientLiquidity);
 
