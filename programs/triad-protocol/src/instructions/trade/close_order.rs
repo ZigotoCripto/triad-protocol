@@ -85,7 +85,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
         current_price - future_price
     };
 
-    let price_adjustment = price_diff / 2;
+    let price_adjustment = price_diff / 3;
 
     let mut new_price = current_price.checked_sub(price_adjustment).unwrap();
 

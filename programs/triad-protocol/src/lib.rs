@@ -33,8 +33,11 @@ pub mod triad_protocol {
         instructions::initialize_question(ctx, args)
     }
 
-    pub fn resolve_question(ctx: Context<ResolveQuestion>) -> Result<()> {
-        instructions::resolve_question(ctx)
+    pub fn resolve_question(
+        ctx: Context<ResolveQuestion>,
+        winning_direction: WinningDirection
+    ) -> Result<()> {
+        instructions::resolve_question(ctx, winning_direction)
     }
 
     pub fn create_user(ctx: Context<CreateUser>, args: CreateUserArgs) -> Result<()> {

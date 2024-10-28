@@ -1,10 +1,10 @@
 use anchor_lang::prelude::*;
 
 use crate::{
-    state::{ Market, ResolvedQuestion, QuestionStatus },
-    errors::TriadProtocolError,
-    events::QuestionUpdate,
     constraints::is_admin,
+    events::QuestionUpdate,
+    state::{ Market, QuestionStatus, ResolvedQuestion },
+    WinningDirection,
 };
 
 #[derive(Accounts)]
@@ -18,16 +18,12 @@ pub struct ResolveQuestion<'info> {
     pub system_program: Program<'info, System>,
 }
 
-pub fn resolve_question(ctx: Context<ResolveQuestion>) -> Result<()> {
+pub fn resolve_question(
+    ctx: Context<ResolveQuestion>,
+    winning_direction: WinningDirection
+) -> Result<()> {
     let market = &mut ctx.accounts.market;
     let current_timestamp = Clock::get()?.unix_timestamp;
-
-    require!(
-        current_timestamp >= market.current_question_end,
-        TriadProtocolError::QuestionPeriodNotEnded
-    );
-
-    let winning_direction = market.get_winning_direction().unwrap();
 
     market.is_active = false;
 

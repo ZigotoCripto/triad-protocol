@@ -859,7 +859,16 @@ export type TriadProtocol = {
           address: '11111111111111111111111111111111'
         }
       ]
-      args: []
+      args: [
+        {
+          name: 'winningDirection'
+          type: {
+            defined: {
+              name: 'winningDirection'
+            }
+          }
+        }
+      ]
     },
     {
       name: 'settleOrder'
