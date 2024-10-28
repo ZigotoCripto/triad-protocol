@@ -96,8 +96,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
     require!(net_amount > current_price, TriadProtocolError::InsufficientFunds);
 
     let price_impact = (((net_amount as f64) / (current_liquidity as f64)) *
-        (current_price as f64) *
-        0.639) as u64;
+        (current_price as f64)) as u64;
 
     let future_price = match args.direction {
         OrderDirection::Hype => {
@@ -116,9 +115,11 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
         current_price - future_price
     };
 
-    let price_adjustment = price_diff / 100;
+    let price_adjustment = price_diff / 3;
 
-    let new_price = current_price.checked_add(price_adjustment).unwrap();
+    let mut new_price = current_price.checked_add(price_adjustment).unwrap();
+
+    new_price = new_price.clamp(1, 999_999);
 
     let total_shares = ((net_amount * 1_000_000) / new_price) as u64;
 

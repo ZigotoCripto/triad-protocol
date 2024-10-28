@@ -58,7 +58,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
 
     let order_index = user_trade.orders
         .iter()
-        .position(|order| order.order_id == order_id)
+        .position(|order| order.order_id == order_id && order.market_id == market.market_id)
         .ok_or(TriadProtocolError::OrderNotFound)?;
 
     let order = user_trade.orders[order_index];
@@ -75,16 +75,15 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
     let current_amount = (order.total_shares * current_price) / 1_000_000;
 
     let price_impact = (((current_amount as f64) / (current_liquidity as f64)) *
-        (current_price as f64) *
-        0.1) as u64;
+        (current_price as f64)) as u64;
 
     let future_price = match order.direction {
         OrderDirection::Hype => {
-            let price = current_price.checked_sub(price_impact).unwrap_or(1);
+            let price = current_price.checked_sub(price_impact).unwrap();
             price.clamp(1, 999_999)
         }
         OrderDirection::Flop => {
-            let price = current_price.checked_sub(price_impact).unwrap_or(1);
+            let price = current_price.checked_sub(price_impact).unwrap();
             price.clamp(1, 999_999)
         }
     };
@@ -95,9 +94,11 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
         current_price - future_price
     };
 
-    let price_adjustment = price_diff / 100;
+    let price_adjustment = price_diff / 3;
 
-    let new_price = current_price.checked_sub(price_adjustment).unwrap_or(1);
+    let mut new_price = current_price.checked_sub(price_adjustment).unwrap();
+
+    new_price = new_price.clamp(1, 999_999);
 
     let current_amount = (order.total_shares * new_price) / 1_000_000;
 
