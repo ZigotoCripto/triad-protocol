@@ -98,16 +98,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
     let price_impact = (((net_amount as f64) / (current_liquidity as f64)) *
         (current_price as f64)) as u64;
 
-    let future_price = match args.direction {
-        OrderDirection::Hype => {
-            let price = current_price.checked_add(price_impact).unwrap();
-            price.clamp(1, 999_999)
-        }
-        OrderDirection::Flop => {
-            let price = current_price.checked_add(price_impact).unwrap();
-            price.clamp(1, 999_999)
-        }
-    };
+    let future_price = current_price.checked_add(price_impact).unwrap().clamp(1, 999_999);
 
     let price_diff = if future_price > current_price {
         future_price - current_price
@@ -115,7 +106,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
         current_price - future_price
     };
 
-    let price_adjustment = price_diff / 3;
+    let price_adjustment = price_diff / 2;
 
     let mut new_price = current_price.checked_add(price_adjustment).unwrap();
 
