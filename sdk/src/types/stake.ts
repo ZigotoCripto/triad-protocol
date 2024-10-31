@@ -27,7 +27,7 @@ export type InitializeStakeArgs = {
 export type UpdateStakeVaultArgs = {
   wallet: PublicKey
   amount?: BN
-  status?: boolean
+  isLocked?: boolean
 }
 
 export type RequestWithdrawArgs = {

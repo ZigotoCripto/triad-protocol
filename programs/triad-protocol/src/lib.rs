@@ -40,6 +40,10 @@ pub mod triad_protocol {
         instructions::resolve_question(ctx, winning_direction)
     }
 
+    pub fn add_liquidity(ctx: Context<AddLiquidity>, args: AddLiquidityArgs) -> Result<()> {
+        instructions::add_liquidity(ctx, args)
+    }
+
     pub fn create_user(ctx: Context<CreateUser>, args: CreateUserArgs) -> Result<()> {
         instructions::create_user(ctx, args)
     }

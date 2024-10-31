@@ -63,6 +63,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
 
     let order = user_trade.orders[order_index];
 
+    require!(ts > market.update_ts, TriadProtocolError::ConcurrentTransaction);
     require!(market.market_id == order.market_id, TriadProtocolError::Unauthorized);
 
     let (current_price, current_liquidity) = match order.direction {
@@ -133,6 +134,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
 
     market.total_volume = market.total_volume.checked_add(current_amount).unwrap();
     market.open_orders_count = market.open_orders_count.checked_sub(1).unwrap();
+    market.update_ts = ts;
 
     let total_amount = order.total_amount;
 

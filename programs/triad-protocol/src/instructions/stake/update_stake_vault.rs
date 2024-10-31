@@ -69,8 +69,8 @@ pub fn update_stake_vault(
         stake_vault.amount = stake_vault.amount.checked_add(args.amount.unwrap()).unwrap();
     }
 
-    if args.status.is_some() {
-        stake_vault.is_locked = args.status.unwrap();
+    if args.is_locked.is_some() {
+        stake_vault.is_locked = args.is_locked.unwrap();
     }
 
     Ok(())

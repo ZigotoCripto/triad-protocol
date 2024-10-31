@@ -26,16 +26,8 @@ pub fn initialize_question(
     let market = &mut ctx.accounts.market;
     let current_timestamp = Clock::get()?.unix_timestamp;
 
-    require!(
-        current_timestamp >= market.current_question_end,
-        TriadProtocolError::QuestionPeriodNotEnded
-    );
-
     require!(args.start_time > current_timestamp, TriadProtocolError::InvalidStartTime);
-
     require!(args.end_time > args.start_time, TriadProtocolError::InvalidEndTime);
-
-    require!(market.open_orders_count == 0, TriadProtocolError::HasOpenedOrders);
 
     market.current_question_id = market.current_question_id.checked_add(1).unwrap();
     market.current_question_start = args.start_time;
@@ -46,8 +38,6 @@ pub fn initialize_question(
     market.hype_price = 500_000; // Reset to 0.5 TRD
     market.flop_price = 500_000; // Reset to 0.5 TRD
     market.market_price = 500_000;
-    market.hype_liquidity = 0;
-    market.flop_liquidity = 0;
     market.total_hype_shares = 0;
     market.total_flop_shares = 0;
     market.open_orders_count = 0;

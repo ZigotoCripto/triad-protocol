@@ -53,11 +53,14 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
     let user_trade = &mut ctx.accounts.user_trade;
 
     require!(market.is_active, TriadProtocolError::MarketInactive);
-
     require!(
         market.previous_resolved_question.question_id == market.current_question_id,
         TriadProtocolError::MarketStillActive
     );
+
+    let winning_direction = market.previous_resolved_question.winning_direction;
+
+    require!(winning_direction != WinningDirection::None, TriadProtocolError::MarketNotResolved);
 
     let order_index = user_trade.orders
         .iter()
@@ -67,23 +70,46 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
     let order = user_trade.orders[order_index];
 
     require!(
-        market.current_question_id >= order.question_id,
+        market.current_question_id == order.question_id,
         TriadProtocolError::MarketStillActive
     );
 
-    let winning_direction = market.previous_resolved_question.winning_direction;
-
-    let (payout, is_winner) = match (order.direction, winning_direction) {
+    let (shares, is_winner) = match (order.direction, winning_direction) {
         | (OrderDirection::Hype, WinningDirection::Hype)
         | (OrderDirection::Flop, WinningDirection::Flop) => {
             let winning_payout = order.total_shares;
             (winning_payout, true)
         }
-        (_, WinningDirection::Draw) => { (order.total_amount, false) }
         _ => { (0, false) }
     };
 
-    if payout > 0 {
+    let (market_shares, market_opposit_liquidity) = match winning_direction {
+        WinningDirection::Hype => (market.total_hype_shares, market.flop_liquidity),
+        WinningDirection::Flop => (market.total_flop_shares, market.hype_liquidity),
+        _ => (0, 0),
+    };
+
+    let med_price = market_opposit_liquidity
+        .checked_div(market_shares)
+        .unwrap()
+        .clamp(1, 1_000_000);
+
+    let mut payout = (shares - order.total_amount) * med_price + order.total_amount;
+
+    if !is_winner {
+        payout = 0;
+    }
+
+    if payout > 0 && is_winner {
+        msg!("Market Shares {:?}", market_shares);
+        msg!("Market Opposit Liquidity {:?}", market_opposit_liquidity);
+        msg!("Med Price {:?}", med_price);
+        msg!("Payout {:?}", payout);
+
+        return Ok(());
+    }
+
+    if payout > 0 && is_winner {
         let signer: &[&[&[u8]]] = &[&[b"market", &market.market_id.to_le_bytes(), &[market.bump]]];
 
         transfer_checked(
@@ -106,15 +132,10 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
 
     let pnl = (payout as i64) - (order.total_amount as i64);
 
-    user_trade.orders[order_index].status = if pnl >= 0 {
-        OrderStatus::Claimed
-    } else {
-        OrderStatus::Liquidated
-    };
+    user_trade.orders[order_index].status = OrderStatus::Closed;
+    user_trade.opened_orders = user_trade.opened_orders.checked_sub(1).unwrap();
 
-    user_trade.opened_orders = user_trade.opened_orders.saturating_sub(1);
-
-    market.open_orders_count = market.open_orders_count.saturating_sub(1);
+    market.open_orders_count = market.open_orders_count.checked_sub(1).unwrap();
 
     emit!(OrderUpdate {
         user: *ctx.accounts.signer.key,
