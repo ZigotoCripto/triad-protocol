@@ -89,10 +89,11 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
         _ => (0, 0),
     };
 
-    let med_price = market_opposit_liquidity
-        .checked_div(market_shares)
-        .unwrap()
-        .clamp(1, 1_000_000);
+    let mut med_price = 1;
+
+    if market_shares > market_opposit_liquidity {
+        med_price = market_opposit_liquidity.checked_div(market_shares).unwrap();
+    }
 
     let mut payout = (shares - order.total_amount) * med_price + order.total_amount;
 

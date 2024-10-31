@@ -226,7 +226,7 @@ export default class Stake {
       this.program.methods
         .updateStakeVault({
           amount,
-          status: false,
+          isLocked,
           stakeVault: this.stakeVaultName
         })
         .accounts({
