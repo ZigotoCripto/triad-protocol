@@ -24,6 +24,7 @@ pub struct CreateUserTrade<'info> {
 
 pub fn create_user_trade(ctx: Context<CreateUserTrade>) -> Result<()> {
     let user_trade = &mut ctx.accounts.user_trade;
+    let user = &mut ctx.accounts.user;
 
     user_trade.set_inner(UserTrade {
         bump: ctx.bumps.user_trade,
@@ -34,6 +35,8 @@ pub fn create_user_trade(ctx: Context<CreateUserTrade>) -> Result<()> {
         orders: [Order::default(); 10],
         padding: [0; 32],
     });
+
+    user.user_trade = user_trade.key();
 
     Ok(())
 }

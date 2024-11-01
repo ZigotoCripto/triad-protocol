@@ -9,7 +9,8 @@ import {
   FeeVault,
   InitializeQuestionArgs,
   Market,
-  OpenOrderArgs
+  OpenOrderArgs,
+  OrderDirection
 } from './types/trade'
 import { RpcOptions } from './types'
 import BN from 'bn.js'
@@ -20,7 +21,7 @@ import {
   getMarketPDA,
   getUserTradePDA
 } from './utils/pda/trade'
-import { getTokenATA, getUserPDA } from './utils/pda'
+import { getUserPDA } from './utils/pda'
 import sendVersionedTransaction from './utils/sendVersionedTransaction'
 import sendTransactionWithOptions from './utils/sendTransactionWithOptions'
 import { swap } from './utils/swap'
@@ -290,15 +291,32 @@ export default class Trade {
    *
    */
   async resolveQuestion(
-    marketId: number,
+    {
+      marketId,
+      winningDirection
+    }: {
+      marketId: number
+      winningDirection:
+        | {
+            hype: {}
+          }
+        | {
+            flop: {}
+          }
+        | {
+            none: {}
+          }
+    },
     options?: RpcOptions
   ): Promise<string> {
     const marketPDA = getMarketPDA(this.program.programId, marketId)
 
-    const method = this.program.methods.resolveQuestion().accounts({
-      signer: this.provider.publicKey,
-      market: marketPDA
-    })
+    const method = this.program.methods
+      .resolveQuestion(winningDirection)
+      .accounts({
+        signer: this.provider.publicKey,
+        market: marketPDA
+      })
 
     return sendTransactionWithOptions(method, options)
   }
@@ -328,6 +346,40 @@ export default class Trade {
         market: marketPDA,
         mint: this.mint
       }),
+      options
+    )
+  }
+
+  /**
+   * Add Liquidity
+   * @param marketId - The ID of the market
+   * @param amount - The amount of the order
+   * @param direction - The direction of the order
+   *
+   * @param options - RPC options
+   *
+   */
+  async addLiquidity(
+    {
+      marketId,
+      amount,
+      direction
+    }: { marketId: number; amount: number; direction: OrderDirection },
+    options?: RpcOptions
+  ): Promise<string> {
+    const marketPDA = getMarketPDA(this.program.programId, marketId)
+
+    return sendTransactionWithOptions(
+      this.program.methods
+        .addLiquidity({
+          amount: new BN(amount * 10 ** TRD_DECIMALS),
+          direction: direction
+        })
+        .accounts({
+          signer: this.provider.publicKey,
+          market: marketPDA,
+          mint: this.mint
+        }),
       options
     )
   }

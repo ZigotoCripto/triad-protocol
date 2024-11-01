@@ -59,7 +59,7 @@ pub struct StakeTokenArgs {
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct UpdateStakeVaultArgs {
     pub amount: Option<u64>,
-    pub status: Option<bool>,
+    pub is_locked: Option<bool>,
     pub stake_vault: String,
 }
 

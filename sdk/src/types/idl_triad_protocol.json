@@ -8,6 +8,103 @@
   },
   "instructions": [
     {
+      "name": "add_liquidity",
+      "discriminator": [181, 157, 89, 67, 143, 182, 52, 72],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "user_from_ata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "signer"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
+                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
+                219, 233, 248, 89
+              ]
+            }
+          }
+        },
+        {
+          "name": "market_to_ata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "market"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
+                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
+                219, 233, 248, 89
+              ]
+            }
+          }
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "AddLiquidityArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "claim_stake_rewards",
       "discriminator": [107, 91, 233, 196, 211, 47, 218, 21],
       "accounts": [
@@ -232,22 +329,6 @@
               {
                 "kind": "const",
                 "value": [117, 115, 101, 114]
-              },
-              {
-                "kind": "account",
-                "path": "signer"
-              }
-            ]
-          }
-        },
-        {
-          "name": "user_trade",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [117, 115, 101, 114, 95, 116, 114, 97, 100, 101]
               },
               {
                 "kind": "account",
@@ -1546,9 +1627,44 @@
       "code": 6043,
       "name": "InsufficientLiquidity",
       "msg": "Insufficient liquidity"
+    },
+    {
+      "code": 6044,
+      "name": "MarketNotResolved",
+      "msg": "Market not resolved"
+    },
+    {
+      "code": 6045,
+      "name": "MarketAlreadyResolved",
+      "msg": "Market already resolved"
+    },
+    {
+      "code": 6046,
+      "name": "ConcurrentTransaction",
+      "msg": "Concurrent transaction"
     }
   ],
   "types": [
+    {
+      "name": "AddLiquidityArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "direction",
+            "type": {
+              "defined": {
+                "name": "OrderDirection"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "ClaimStakeRewardsArgs",
       "type": {
@@ -2558,7 +2674,7 @@
             }
           },
           {
-            "name": "status",
+            "name": "is_locked",
             "type": {
               "option": "bool"
             }
@@ -2808,9 +2924,6 @@
           },
           {
             "name": "Flop"
-          },
-          {
-            "name": "Draw"
           }
         ]
       }

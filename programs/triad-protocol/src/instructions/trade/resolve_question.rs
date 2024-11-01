@@ -2,6 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::{
     constraints::is_admin,
+    errors::TriadProtocolError,
     events::QuestionUpdate,
     state::{ Market, QuestionStatus, ResolvedQuestion },
     WinningDirection,
@@ -26,6 +27,11 @@ pub fn resolve_question(
     let current_timestamp = Clock::get()?.unix_timestamp;
 
     market.is_active = false;
+
+    require!(
+        market.previous_resolved_question.winning_direction == WinningDirection::None,
+        TriadProtocolError::MarketAlreadyResolved
+    );
 
     market.previous_resolved_question = ResolvedQuestion {
         question_id: market.current_question_id,

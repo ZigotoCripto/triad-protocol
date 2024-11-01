@@ -14,6 +14,161 @@ export type TriadProtocol = {
   }
   instructions: [
     {
+      name: 'addLiquidity'
+      discriminator: [181, 157, 89, 67, 143, 182, 52, 72]
+      accounts: [
+        {
+          name: 'signer'
+          writable: true
+          signer: true
+        },
+        {
+          name: 'market'
+          writable: true
+        },
+        {
+          name: 'mint'
+          writable: true
+        },
+        {
+          name: 'userFromAta'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'account'
+                path: 'signer'
+              },
+              {
+                kind: 'account'
+                path: 'tokenProgram'
+              },
+              {
+                kind: 'account'
+                path: 'mint'
+              }
+            ]
+            program: {
+              kind: 'const'
+              value: [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          name: 'marketToAta'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'account'
+                path: 'market'
+              },
+              {
+                kind: 'account'
+                path: 'tokenProgram'
+              },
+              {
+                kind: 'account'
+                path: 'mint'
+              }
+            ]
+            program: {
+              kind: 'const'
+              value: [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          name: 'tokenProgram'
+          address: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
+        },
+        {
+          name: 'associatedTokenProgram'
+          address: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
+        },
+        {
+          name: 'systemProgram'
+          address: '11111111111111111111111111111111'
+        }
+      ]
+      args: [
+        {
+          name: 'args'
+          type: {
+            defined: {
+              name: 'addLiquidityArgs'
+            }
+          }
+        }
+      ]
+    },
+    {
       name: 'claimStakeRewards'
       discriminator: [107, 91, 233, 196, 211, 47, 218, 21]
       accounts: [
@@ -354,22 +509,6 @@ export type TriadProtocol = {
               {
                 kind: 'const'
                 value: [117, 115, 101, 114]
-              },
-              {
-                kind: 'account'
-                path: 'signer'
-              }
-            ]
-          }
-        },
-        {
-          name: 'userTrade'
-          writable: true
-          pda: {
-            seeds: [
-              {
-                kind: 'const'
-                value: [117, 115, 101, 114, 95, 116, 114, 97, 100, 101]
               },
               {
                 kind: 'account'
@@ -2074,9 +2213,44 @@ export type TriadProtocol = {
       code: 6043
       name: 'insufficientLiquidity'
       msg: 'Insufficient liquidity'
+    },
+    {
+      code: 6044
+      name: 'marketNotResolved'
+      msg: 'Market not resolved'
+    },
+    {
+      code: 6045
+      name: 'marketAlreadyResolved'
+      msg: 'Market already resolved'
+    },
+    {
+      code: 6046
+      name: 'concurrentTransaction'
+      msg: 'Concurrent transaction'
     }
   ]
   types: [
+    {
+      name: 'addLiquidityArgs'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'amount'
+            type: 'u64'
+          },
+          {
+            name: 'direction'
+            type: {
+              defined: {
+                name: 'orderDirection'
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       name: 'claimStakeRewardsArgs'
       type: {
@@ -3084,7 +3258,7 @@ export type TriadProtocol = {
             }
           },
           {
-            name: 'status'
+            name: 'isLocked'
             type: {
               option: 'bool'
             }
@@ -3334,9 +3508,6 @@ export type TriadProtocol = {
           },
           {
             name: 'flop'
-          },
-          {
-            name: 'draw'
           }
         ]
       }

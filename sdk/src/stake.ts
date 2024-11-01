@@ -215,18 +215,18 @@ export default class Stake {
    *  Update Stake Vault
    *  @param wallet - User wallet
    *  @param amount - Reward amount to deposit (optional)
-   *  @param status - Status of the stake vault (optional)
+   *  @param isLocked - is locked stake vault (optional)
    *
    */
   async updateStakeVault(
-    { wallet, amount, status }: UpdateStakeVaultArgs,
+    { wallet, amount, isLocked }: UpdateStakeVaultArgs,
     options?: RpcOptions
   ) {
     return sendTransactionWithOptions(
       this.program.methods
         .updateStakeVault({
           amount,
-          status,
+          isLocked,
           stakeVault: this.stakeVaultName
         })
         .accounts({

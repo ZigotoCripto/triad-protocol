@@ -79,12 +79,11 @@ pub struct ResolvedQuestion {
     pub padding: [u8; 40],
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq)]
 pub enum WinningDirection {
     None,
     Hype,
     Flop,
-    Draw,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy)]
@@ -97,6 +96,12 @@ pub enum QuestionStatus {
 pub struct InitializeMarketArgs {
     pub name: String,
     pub market_id: u64,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize)]
+pub struct AddLiquidityArgs {
+    pub amount: u64,
+    pub direction: OrderDirection,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize)]
@@ -145,7 +150,7 @@ impl Default for Market {
             update_ts: 0,
             open_orders_count: 0,
             next_order_id: 0,
-            fee_bps: 2131, // 2.131% fee
+            fee_bps: 2100, // 2.100% fee
             fee_vault: Pubkey::default(),
             is_active: true,
             market_price: 0,
@@ -190,15 +195,13 @@ impl Market {
             current_price - future_price
         };
 
-        let price_adjustment = price_diff / 3;
+        let price_adjustment = ((price_diff as f64) / 1.12) as u64;
 
         let new_price = if is_open {
             current_price.checked_add(price_adjustment).unwrap()
         } else {
             current_price.checked_sub(price_adjustment).unwrap()
         };
-
-        msg!("new_price: {}", new_price);
 
         match direction {
             OrderDirection::Hype => {
