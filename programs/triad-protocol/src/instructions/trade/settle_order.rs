@@ -52,7 +52,6 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
     let market = &mut ctx.accounts.market;
     let user_trade = &mut ctx.accounts.user_trade;
 
-    require!(market.is_active, TriadProtocolError::MarketInactive);
     require!(
         market.previous_resolved_question.question_id == market.current_question_id,
         TriadProtocolError::MarketStillActive
@@ -89,26 +88,20 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
         _ => (0, 0),
     };
 
-    let mut med_price = 1;
+    let mut med_price = 1.0;
 
     if market_shares > market_opposit_liquidity {
-        med_price = market_opposit_liquidity.checked_div(market_shares).unwrap();
+        med_price = (market_opposit_liquidity as f64) / (market_shares as f64);
     }
 
-    let mut payout = (shares - order.total_amount) * med_price + order.total_amount;
-
-    if !is_winner {
-        payout = 0;
-    }
-
-    if payout > 0 && is_winner {
-        msg!("Market Shares {:?}", market_shares);
-        msg!("Market Opposit Liquidity {:?}", market_opposit_liquidity);
-        msg!("Med Price {:?}", med_price);
-        msg!("Payout {:?}", payout);
-
-        return Ok(());
-    }
+    let payout = if !is_winner {
+        0
+    } else {
+        let float_payout =
+            ((shares as f64) - (order.total_amount as f64)) * med_price +
+            (order.total_amount as f64);
+        float_payout.round() as u64
+    };
 
     if payout > 0 && is_winner {
         let signer: &[&[&[u8]]] = &[&[b"market", &market.market_id.to_le_bytes(), &[market.bump]]];
@@ -129,6 +122,12 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
         )?;
 
         user_trade.total_withdraws = user_trade.total_withdraws.checked_add(payout).unwrap();
+
+        msg!("Amount {:?}", order.total_amount);
+        msg!("Market Shares {:?}", market_shares);
+        msg!("Market Opposit Liquidity {:?}", market_opposit_liquidity);
+        msg!("Med Price {:?}", med_price);
+        msg!("Payout {:?}", payout);
     }
 
     let pnl = (payout as i64) - (order.total_amount as i64);

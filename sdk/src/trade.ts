@@ -369,17 +369,18 @@ export default class Trade {
   ): Promise<string> {
     const marketPDA = getMarketPDA(this.program.programId, marketId)
 
-    const method = this.program.methods
-      .addLiquidity({
-        amount: new BN(amount * 10 ** TRD_DECIMALS),
-        direction: direction
-      })
-      .accounts({
-        signer: this.provider.publicKey,
-        market: marketPDA,
-        mint: this.mint
-      })
-
-    return sendTransactionWithOptions(method, options)
+    return sendTransactionWithOptions(
+      this.program.methods
+        .addLiquidity({
+          amount: new BN(amount * 10 ** TRD_DECIMALS),
+          direction: direction
+        })
+        .accounts({
+          signer: this.provider.publicKey,
+          market: marketPDA,
+          mint: this.mint
+        }),
+      options
+    )
   }
 }
