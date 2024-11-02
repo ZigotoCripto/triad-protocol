@@ -72,29 +72,38 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
         OrderDirection::Flop => (market.flop_price, market.flop_liquidity),
     };
 
+    let (otherside_current_liquidity) = match args.direction {
+        OrderDirection::Hype => (market.flop_liquidity),
+        OrderDirection::Flop => (market.hype_liquidity),
+    };
+    
     require!(current_liquidity > 0, TriadProtocolError::InsufficientLiquidity);
 
     let mut current_amount = (order.total_shares * current_price) / 1_000_000;
+    let new_directional_liquidity = current_liquidity.checked_sub(net_amount).unwrap();
+    let new_total_liquidity = new_directional_liquidity.checked_sub(otherside_current_liquidity).unwrap();
+    let mut new_price = ((new_directional_liquidity as f64) / (new_total_liquidity as f64)) as u64
+    
+    //let price_impact = (((current_amount as f64) / (current_liquidity as f64)) *
+    //    (current_price as f64)) as u64;
 
-    let price_impact = (((current_amount as f64) / (current_liquidity as f64)) *
-        (current_price as f64)) as u64;
+    //let future_price = current_price.checked_sub(price_impact).unwrap().clamp(1, 999_999);
 
-    let future_price = current_price.checked_sub(price_impact).unwrap().clamp(1, 999_999);
+    //let price_diff = if future_price > current_price {
+    //    future_price - current_price
+    //} else {
+    //    current_price - future_price
+    //};
 
-    let price_diff = if future_price > current_price {
-        future_price - current_price
-    } else {
-        current_price - future_price
-    };
+    //let price_adjustment = price_diff / 3;
 
-    let price_adjustment = price_diff / 3;
-
-    let mut new_price = current_price.checked_sub(price_adjustment).unwrap();
+    //let mut new_price = current_price.checked_sub(price_adjustment).unwrap();
 
     new_price = new_price.clamp(1, 999_999);
 
-    current_amount = (order.total_shares * new_price) / 1_000_000;
-
+    //current_amount = (order.total_shares * new_price) / 1_000_000;
+    let price_impact = (new_price as f64)/(current_price as f64)
+    price_impact = price_impact - 1
     require!(current_liquidity > current_amount, TriadProtocolError::InsufficientLiquidity);
 
     if current_amount > 0 {
