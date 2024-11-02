@@ -140,8 +140,8 @@ impl Default for Market {
             name: String::new(),
             hype_price: 500_000, // Initial price set to 0.5 TRD
             flop_price: 500_000, // Initial price set to 0.5 TRD
-            hype_liquidity: 100_000_000,
-            flop_liquidity: 100_000_000,
+            hype_liquidity: 500_000_000,
+            flop_liquidity: 500_000_000,
             total_hype_shares: 0,
             total_flop_shares: 0,
             total_volume: 0,

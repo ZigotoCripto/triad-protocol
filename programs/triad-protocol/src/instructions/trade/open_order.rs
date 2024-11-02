@@ -83,9 +83,9 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
     require!(market.is_active, TriadProtocolError::MarketInactive);
     require!(market.current_question_start > 0, TriadProtocolError::QuestionPeriodNotStarted);
 
-    let (current_price, current_liquidity) = match args.direction {
-        OrderDirection::Hype => (market.hype_price, market.hype_liquidity),
-        OrderDirection::Flop => (market.flop_price, market.flop_liquidity),
+    let (current_price, current_liquidity, otherside_current_liquidity) = match args.direction {
+        OrderDirection::Hype => (market.hype_price, market.hype_liquidity, market.flop_liquidity),
+        OrderDirection::Flop => (market.flop_price, market.flop_liquidity, market.hype_liquidity),
     };
 
     require!(ts > market.update_ts, TriadProtocolError::ConcurrentTransaction);
@@ -97,22 +97,12 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
 
     require!(net_amount > current_price, TriadProtocolError::InsufficientFunds);
 
-    let price_impact = (((net_amount as f64) / (current_liquidity as f64)) *
-        (current_price as f64)) as u64;
+    let new_directional_liquidity = current_liquidity.checked_add(net_amount).unwrap();
+    let markets_liquidity = new_directional_liquidity
+        .checked_add(otherside_current_liquidity)
+        .unwrap();
 
-    let mut future_price = current_price.checked_add(price_impact).unwrap();
-
-    future_price = future_price.clamp(1, 999_999);
-
-    let price_diff = if future_price > current_price {
-        future_price - current_price
-    } else {
-        current_price - future_price
-    };
-
-    let price_adjustment = price_diff / 3;
-
-    let mut new_price = current_price.checked_add(price_adjustment).unwrap();
+    let mut new_price = ((new_directional_liquidity as f64) / (markets_liquidity as f64)) as u64;
 
     new_price = new_price.clamp(1, 999_999);
 
