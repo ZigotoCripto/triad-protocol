@@ -81,6 +81,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
     let ts = Clock::get()?.unix_timestamp;
 
     require!(market.is_active, TriadProtocolError::MarketInactive);
+    require!(market.current_question_start > 0, TriadProtocolError::QuestionPeriodNotStarted);
 
     let (current_price, current_liquidity) = match args.direction {
         OrderDirection::Hype => (market.hype_price, market.hype_liquidity),
