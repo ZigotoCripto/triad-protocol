@@ -26,6 +26,10 @@ pub mod triad_protocol {
         instructions::initialize_market(ctx, args)
     }
 
+    pub fn collect_fee(ctx: Context<CollectFee>) -> Result<()> {
+        instructions::collect_fee(ctx)
+    }
+
     pub fn initialize_question(
         ctx: Context<InitializeQuestion>,
         args: InitializeQuestionArgs
