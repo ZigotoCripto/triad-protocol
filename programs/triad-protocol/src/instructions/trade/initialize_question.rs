@@ -35,13 +35,6 @@ pub fn initialize_question(
     market.current_question = args.question;
     market.is_active = true;
 
-    market.hype_price = 500_000; // Reset to 0.5 TRD
-    market.flop_price = 500_000; // Reset to 0.5 TRD
-    market.market_price = 500_000;
-    market.total_hype_shares = 0;
-    market.total_flop_shares = 0;
-    market.open_orders_count = 0;
-
     emit!(QuestionUpdate {
         market_id: market.market_id,
         question_id: market.current_question_id,

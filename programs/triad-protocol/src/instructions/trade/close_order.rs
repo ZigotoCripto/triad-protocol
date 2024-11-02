@@ -115,7 +115,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
             ctx.accounts.mint.decimals
         )?;
 
-        market.update_price(current_amount, future_price, order.direction, None, false)?;
+        market.update_price(current_amount, new_price, order.direction, None, false)?;
     }
 
     match order.direction {

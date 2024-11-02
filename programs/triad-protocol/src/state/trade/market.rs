@@ -195,7 +195,7 @@ impl Market {
             current_price - future_price
         };
 
-        let price_adjustment = ((price_diff as f64) / 1.12) as u64;
+        let price_adjustment = ((price_diff as f64) / 1.02) as u64;
 
         let new_price = if is_open {
             current_price.checked_add(price_adjustment).unwrap()
