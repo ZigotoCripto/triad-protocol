@@ -383,4 +383,29 @@ export default class Trade {
       options
     )
   }
+
+  /**
+   * Collect Fee
+   * @param marketId - The ID of the market
+   *
+   * @param options - RPC options
+   *
+   */
+  async collectFee(
+    { marketId }: { marketId: number },
+    options?: RpcOptions
+  ): Promise<string> {
+    const marketPDA = getMarketPDA(this.program.programId, marketId)
+    const feeVaultPDA = getFeeVaultPDA(this.program.programId, marketId)
+
+    return sendTransactionWithOptions(
+      this.program.methods.collectFee().accounts({
+        signer: this.provider.publicKey,
+        market: marketPDA,
+        feeVault: feeVaultPDA,
+        mint: this.mint
+      }),
+      options
+    )
+  }
 }

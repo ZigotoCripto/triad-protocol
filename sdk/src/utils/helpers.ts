@@ -102,7 +102,6 @@ export const accountToMarket = (account: any, address: PublicKey): Market => {
 }
 
 const accountToResolvedQuestion = (question: any): ResolvedQuestion => {
-  console.log(question)
   return {
     question: Buffer.from(question.question).toString().replace(/\0+$/, ''),
     startTime: question.startTime.toString(),
