@@ -67,33 +67,30 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
     require!(ts > market.update_ts, TriadProtocolError::ConcurrentTransaction);
     require!(market.market_id == order.market_id, TriadProtocolError::Unauthorized);
 
-    let (current_price, current_liquidity) = match order.direction {
-        OrderDirection::Hype => (market.hype_price, market.hype_liquidity),
-        OrderDirection::Flop => (market.flop_price, market.flop_liquidity),
+    let (current_price, current_liquidity, otherside_current_liquidity) = match order.direction {
+        OrderDirection::Hype => (market.hype_price, market.hype_liquidity, market.flop_liquidity),
+        OrderDirection::Flop => (market.flop_price, market.flop_liquidity, market.hype_liquidity),
     };
 
     require!(current_liquidity > 0, TriadProtocolError::InsufficientLiquidity);
 
-    let mut current_amount = (order.total_shares * current_price) / 1_000_000;
+    let current_amount = order.total_shares
+        .checked_mul(current_price)
+        .unwrap()
+        .checked_div(1_000_000)
+        .unwrap();
 
-    let price_impact = (((current_amount as f64) / (current_liquidity as f64)) *
-        (current_price as f64)) as u64;
+    let new_directional_liquidity = current_liquidity.checked_sub(current_amount).unwrap();
+    let markets_liquidity = new_directional_liquidity
+        .checked_add(otherside_current_liquidity)
+        .unwrap();
 
-    let future_price = current_price.checked_sub(price_impact).unwrap().clamp(1, 999_999);
-
-    let price_diff = if future_price > current_price {
-        future_price - current_price
-    } else {
-        current_price - future_price
-    };
-
-    let price_adjustment = price_diff / 3;
-
-    let mut new_price = current_price.checked_sub(price_adjustment).unwrap();
-
-    new_price = new_price.clamp(1, 999_999);
-
-    current_amount = (order.total_shares * new_price) / 1_000_000;
+    let new_price = new_directional_liquidity
+        .checked_mul(1_000_000)
+        .unwrap()
+        .checked_div(markets_liquidity)
+        .unwrap()
+        .clamp(1, 999_999);
 
     require!(current_liquidity > current_amount, TriadProtocolError::InsufficientLiquidity);
 
@@ -115,7 +112,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
             ctx.accounts.mint.decimals
         )?;
 
-        market.update_price(current_amount, future_price, order.direction, None, false)?;
+        market.update_price(current_amount, new_price, order.direction, None, false)?;
     }
 
     match order.direction {

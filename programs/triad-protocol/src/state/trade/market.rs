@@ -140,8 +140,8 @@ impl Default for Market {
             name: String::new(),
             hype_price: 500_000, // Initial price set to 0.5 TRD
             flop_price: 500_000, // Initial price set to 0.5 TRD
-            hype_liquidity: 100_000_000,
-            flop_liquidity: 100_000_000,
+            hype_liquidity: 500_000_000,
+            flop_liquidity: 500_000_000,
             total_hype_shares: 0,
             total_flop_shares: 0,
             total_volume: 0,
@@ -195,12 +195,12 @@ impl Market {
             current_price - future_price
         };
 
-        let price_adjustment = ((price_diff as f64) / 1.12) as u64;
+        let price_adjustment = ((price_diff as f64) / 1.02) as u64;
 
         let new_price = if is_open {
-            current_price.checked_add(price_adjustment).unwrap()
+            current_price.checked_add(price_adjustment).unwrap().clamp(1, 999_999)
         } else {
-            current_price.checked_sub(price_adjustment).unwrap()
+            current_price.checked_sub(price_adjustment).unwrap().clamp(1, 999_999)
         };
 
         match direction {
