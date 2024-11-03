@@ -102,18 +102,12 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
         .checked_add(otherside_current_liquidity)
         .unwrap();
 
-    msg!("new_directional_liquidity: {}", new_directional_liquidity);
-    msg!("markets_liquidity: {}", markets_liquidity);
-    msg!("otherside_current_liquidity: {}", otherside_current_liquidity);
-
     let new_price = new_directional_liquidity
         .checked_mul(1_000_000)
         .unwrap()
         .checked_div(markets_liquidity)
         .unwrap()
         .clamp(1, 999_999);
-
-    msg!("new_price: {}", new_price);
 
     let total_shares = net_amount.checked_mul(1_000_000).unwrap().checked_div(new_price).unwrap();
 

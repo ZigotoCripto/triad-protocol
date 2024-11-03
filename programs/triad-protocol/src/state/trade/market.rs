@@ -198,9 +198,9 @@ impl Market {
         let price_adjustment = ((price_diff as f64) / 1.02) as u64;
 
         let new_price = if is_open {
-            current_price.checked_add(price_adjustment).unwrap()
+            current_price.checked_add(price_adjustment).unwrap().clamp(1, 999_999)
         } else {
-            current_price.checked_sub(price_adjustment).unwrap()
+            current_price.checked_sub(price_adjustment).unwrap().clamp(1, 999_999)
         };
 
         match direction {
