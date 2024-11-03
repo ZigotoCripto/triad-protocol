@@ -92,7 +92,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
     require!(current_price > 0, TriadProtocolError::InvalidPrice);
     require!(current_liquidity > 0, TriadProtocolError::InsufficientLiquidity);
 
-    let fee_amount = (((args.amount as u64) * (market.fee_bps as u64)) / 100000) as u64;
+    let fee_amount = ((args.amount * (market.fee_bps as u64)) / 100000) as u64;
     let net_amount = args.amount.saturating_sub(fee_amount);
 
     require!(net_amount > current_price, TriadProtocolError::InsufficientFunds);
@@ -102,11 +102,20 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
         .checked_add(otherside_current_liquidity)
         .unwrap();
 
-    let mut new_price = ((new_directional_liquidity as f64) / (markets_liquidity as f64)) as u64;
+    msg!("new_directional_liquidity: {}", new_directional_liquidity);
+    msg!("markets_liquidity: {}", markets_liquidity);
+    msg!("otherside_current_liquidity: {}", otherside_current_liquidity);
 
-    new_price = new_price.clamp(1, 999_999);
+    let new_price = new_directional_liquidity
+        .checked_mul(1_000_000)
+        .unwrap()
+        .checked_div(markets_liquidity)
+        .unwrap()
+        .clamp(1, 999_999);
 
-    let total_shares = ((net_amount * 1_000_000) / new_price) as u64;
+    msg!("new_price: {}", new_price);
+
+    let total_shares = net_amount.checked_mul(1_000_000).unwrap().checked_div(new_price).unwrap();
 
     if total_shares.eq(&0) {
         return Err(TriadProtocolError::InsufficientFunds.into());
