@@ -88,19 +88,24 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
         _ => (0, 0),
     };
 
-    let mut med_price = 1.0;
+    //let mut med_price = 1.0;
 
-    if market_shares > market_opposit_liquidity {
-        med_price = (market_opposit_liquidity as f64) / (market_shares as f64);
-    }
+    //if market_shares > market_opposit_liquidity {
+    //    med_price = (market_opposit_liquidity as f64) / (market_shares as f64);
+    //}
 
     let payout = if !is_winner {
         0
     } else {
-        let float_payout =
-            ((shares as f64) - (order.total_amount as f64)) * med_price +
-            (order.total_amount as f64);
-        float_payout.round() as u64
+        //Here, "float_payout" is being used, but this variable is not used later.
+        //let payout =
+        //    ((shares as f64) - (order.total_amount as f64)) * med_price +
+        //    (order.total_amount as f64);
+        //payout.round() as u64
+        // Here de payout is based on opposit_side_liquidity and proportional of the portion of position
+        let payout = ((shares as f64) / (market_shares as f64)) * (market_opposit_liquidity as f64) + 
+             (order.total_amount as f64);
+             payout.round() as u64
     };
 
     if payout > 0 && is_winner {
