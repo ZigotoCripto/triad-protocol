@@ -10,35 +10,25 @@ export type Market = {
   flopPrice: string
   hypeLiquidity: string
   flopLiquidity: string
-  totalHypeShares: string
-  totalFlopShares: string
-  totalVolume: string
+  hypeShares: string
+  flopShares: string
+  volume: string
   mint: string
-  ts: string
   updateTs: string
-  openOrdersCount: string
+  openedOrders: string
   nextOrderId: string
   feeBps: number
   feeVault: string
   isActive: boolean
   marketPrice: string
-  previousResolvedQuestion: ResolvedQuestion
-  currentQuestionId: string
-  currentQuestionStart: string
-  currentQuestionEnd: string
-  currentQuestion: string
-}
-
-export type ResolvedQuestion = {
+  nftHoldersFeeAvailable: string
+  nftHoldersFeeClaimed: string
+  marketFeeAvailable: string
+  marketFeeClaimed: string
+  marketStart: string
+  marketEnd: string
   question: string
-  startTime: string
-  endTime: string
-  hypeLiquidity: string
-  flopLiquidity: string
   winningDirection: WinningDirection
-  marketPrice: string
-  finalHypePrice: string
-  finalFlopPrice: string
 }
 
 export enum WinningDirection {

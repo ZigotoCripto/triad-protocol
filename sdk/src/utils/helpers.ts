@@ -1,6 +1,6 @@
 import { Stake, StakeVault } from './../types/stake'
 import { User } from './../types'
-import { ResolvedQuestion, Market, WinningDirection } from '../types/trade'
+import { Market, WinningDirection } from '../types/trade'
 import { PublicKey } from '@solana/web3.js'
 
 export const encodeString = (value: string, alloc = 32): number[] => {
@@ -66,7 +66,7 @@ export const formatUser = (user: any): User => {
   }
 }
 
-export const accountToMarket = (account: any, address: PublicKey): Market => {
+export const accountToMarketV1 = (account: any, address: PublicKey): Market => {
   return {
     bump: account.bump,
     address: address.toString(),
@@ -77,41 +77,31 @@ export const accountToMarket = (account: any, address: PublicKey): Market => {
     flopPrice: account.flopPrice.toString(),
     hypeLiquidity: account.hypeLiquidity.toString(),
     flopLiquidity: account.flopLiquidity.toString(),
-    totalHypeShares: account.totalHypeShares.toString(),
-    totalFlopShares: account.totalFlopShares.toString(),
-    totalVolume: account.totalVolume.toString(),
+    hypeShares: account.totalHypeShares.toString(),
+    flopShares: account.totalFlopShares.toString(),
+    volume: account.totalVolume.toString(),
     mint: account.mint.toString(),
-    ts: account.ts.toString(),
     updateTs: account.updateTs.toString(),
-    openOrdersCount: account.openOrdersCount.toString(),
+    openedOrders: account.openOrdersCount.toString(),
     nextOrderId: account.nextOrderId.toString(),
     feeBps: account.feeBps,
     feeVault: account.feeVault.toBase58(),
     isActive: account.isActive,
     marketPrice: account.marketPrice.toString(),
-    previousResolvedQuestion: accountToResolvedQuestion(
-      account.previousResolvedQuestion
-    ),
-    currentQuestionId: account.currentQuestionId.toString(),
-    currentQuestionStart: account.currentQuestionStart.toString(),
-    currentQuestionEnd: account.currentQuestionEnd.toString(),
-    currentQuestion: Buffer.from(account.currentQuestion)
+    marketStart: account.currentQuestionStart.toString(),
+    marketEnd: account.currentQuestionEnd.toString(),
+    question: Buffer.from(account.currentQuestion)
       .toString()
-      .replace(/\0+$/, '')
-  }
-}
-
-const accountToResolvedQuestion = (question: any): ResolvedQuestion => {
-  return {
-    question: Buffer.from(question.question).toString().replace(/\0+$/, ''),
-    startTime: question.startTime.toString(),
-    endTime: question.endTime.toString(),
-    hypeLiquidity: question.hypeLiquidity.toString(),
-    flopLiquidity: question.flopLiquidity.toString(),
+      .replace(/\0+$/, ''),
+    nftHoldersFeeAvailable: '0',
+    nftHoldersFeeClaimed: '0',
+    marketFeeAvailable: '0',
+    marketFeeClaimed: '0',
     winningDirection:
-      WinningDirection[Object.keys(question.winningDirection)[0].toUpperCase()],
-    marketPrice: question.marketPrice.toString(),
-    finalHypePrice: question.finalHypePrice.toString(),
-    finalFlopPrice: question.finalFlopPrice.toString()
+      WinningDirection[
+        Object.keys(
+          account.previousResolvedQuestion.winningDirection
+        )[0].toUpperCase()
+      ]
   }
 }

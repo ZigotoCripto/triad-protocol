@@ -14,7 +14,7 @@ import {
 import { RpcOptions } from './types'
 import BN from 'bn.js'
 import { TRD_DECIMALS, TRD_MINT } from './utils/constants'
-import { accountToMarket, encodeString } from './utils/helpers'
+import { accountToMarketV1, encodeString } from './utils/helpers'
 import { getMarketPDA, getUserTradePDA } from './utils/pda/trade'
 import { getUserPDA } from './utils/pda'
 import sendVersionedTransaction from './utils/sendVersionedTransaction'
@@ -39,7 +39,7 @@ export default class Trade {
       .all()
       .then((markets) =>
         markets.map(({ account, publicKey }) =>
-          accountToMarket(account, publicKey)
+          accountToMarketV1(account, publicKey)
         )
       )
   }
@@ -54,7 +54,7 @@ export default class Trade {
 
     const response = await this.program.account.market.fetch(marketPDA)
 
-    return accountToMarket(response, marketPDA)
+    return accountToMarketV1(response, marketPDA)
   }
 
   /**
@@ -65,7 +65,7 @@ export default class Trade {
   async getMarketByAddress(address: PublicKey): Promise<Market> {
     const account = await this.program.account.market.fetch(address)
 
-    return accountToMarket(account, address)
+    return accountToMarketV1(account, address)
   }
 
   /**
