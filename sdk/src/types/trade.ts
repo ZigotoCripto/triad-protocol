@@ -58,13 +58,6 @@ export type OrderStatus =
 
 export type OrderType = { limit: {} } | { market: {} }
 
-export type InitializeQuestionArgs = {
-  marketId: number
-  question: string
-  startTime: number
-  endTime: number
-}
-
 export type OpenOrderArgs = {
   marketId: number
   amount: number
@@ -73,17 +66,10 @@ export type OpenOrderArgs = {
   comment?: string
 }
 
-export type FeeVault = {
-  bump: number
-  authority: PublicKey
-  market: PublicKey
-  deposited: string
-  withdrawn: string
-  netBalance: string
-  projectAvailable: string
-  projectClaimed: string
-  nftHoldersAvailable: string
-  nftHoldersClaimed: string
-  marketAvailable: string
-  marketClaimed: string
+export type InitializeMarketArgs = {
+  marketId: number
+  name: string
+  startTime: number
+  endTime: number
+  question: string
 }

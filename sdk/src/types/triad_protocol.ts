@@ -502,21 +502,17 @@ export type TriadProtocol = {
           writable: true
         },
         {
-          name: 'feeVault'
-          writable: true
-        },
-        {
           name: 'mint'
           writable: true
         },
         {
-          name: 'feeVaultAta'
+          name: 'marketAta'
           writable: true
           pda: {
             seeds: [
               {
                 kind: 'account'
-                path: 'feeVault'
+                path: 'market'
               },
               {
                 kind: 'account'
@@ -749,29 +745,13 @@ export type TriadProtocol = {
           writable: true
         },
         {
-          name: 'feeVault'
-          writable: true
-          pda: {
-            seeds: [
-              {
-                kind: 'const'
-                value: [102, 101, 101, 95, 118, 97, 117, 108, 116]
-              },
-              {
-                kind: 'arg'
-                path: 'args.market_id'
-              }
-            ]
-          }
-        },
-        {
-          name: 'feeAta'
+          name: 'marketAta'
           writable: true
           pda: {
             seeds: [
               {
                 kind: 'account'
-                path: 'feeVault'
+                path: 'market'
               },
               {
                 kind: 'account'
@@ -846,35 +826,6 @@ export type TriadProtocol = {
       ]
     },
     {
-      name: 'initializeQuestion'
-      discriminator: [245, 151, 106, 188, 88, 44, 65, 212]
-      accounts: [
-        {
-          name: 'signer'
-          writable: true
-          signer: true
-        },
-        {
-          name: 'market'
-          writable: true
-        },
-        {
-          name: 'systemProgram'
-          address: '11111111111111111111111111111111'
-        }
-      ]
-      args: [
-        {
-          name: 'args'
-          type: {
-            defined: {
-              name: 'initializeQuestionArgs'
-            }
-          }
-        }
-      ]
-    },
-    {
       name: 'openOrder'
       discriminator: [206, 88, 88, 143, 38, 136, 50, 224]
       accounts: [
@@ -889,10 +840,6 @@ export type TriadProtocol = {
         },
         {
           name: 'market'
-          writable: true
-        },
-        {
-          name: 'feeVault'
           writable: true
         },
         {
@@ -1014,63 +961,6 @@ export type TriadProtocol = {
           }
         },
         {
-          name: 'feeAta'
-          writable: true
-          pda: {
-            seeds: [
-              {
-                kind: 'account'
-                path: 'feeVault'
-              },
-              {
-                kind: 'account'
-                path: 'tokenProgram'
-              },
-              {
-                kind: 'account'
-                path: 'mint'
-              }
-            ]
-            program: {
-              kind: 'const'
-              value: [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
-          }
-        },
-        {
           name: 'tokenProgram'
           address: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
         },
@@ -1131,8 +1021,8 @@ export type TriadProtocol = {
       args: []
     },
     {
-      name: 'resolveQuestion'
-      discriminator: [52, 32, 224, 179, 180, 8, 0, 246]
+      name: 'resolveMarket'
+      discriminator: [155, 23, 80, 173, 46, 74, 23, 239]
       accounts: [
         {
           name: 'signer'
@@ -2089,12 +1979,12 @@ export type TriadProtocol = {
   ]
   accounts: [
     {
-      name: 'feeVault'
-      discriminator: [192, 178, 69, 232, 58, 149, 157, 132]
-    },
-    {
       name: 'market'
       discriminator: [219, 190, 213, 55, 0, 227, 198, 154]
+    },
+    {
+      name: 'marketV2'
+      discriminator: [27, 60, 50, 75, 191, 193, 86, 227]
     },
     {
       name: 'stakeV2'
@@ -2127,16 +2017,16 @@ export type TriadProtocol = {
   ]
   events: [
     {
+      name: 'marketUpdate'
+      discriminator: [170, 101, 124, 32, 249, 253, 251, 96]
+    },
+    {
       name: 'orderUpdate'
       discriminator: [97, 239, 148, 96, 83, 234, 245, 14]
     },
     {
       name: 'priceUpdate'
       discriminator: [222, 51, 180, 226, 165, 188, 203, 54]
-    },
-    {
-      name: 'questionUpdate'
-      discriminator: [110, 108, 240, 86, 176, 226, 54, 113]
     },
     {
       name: 'stakeRewards'
@@ -2430,68 +2320,6 @@ export type TriadProtocol = {
       }
     },
     {
-      name: 'feeVault'
-      type: {
-        kind: 'struct'
-        fields: [
-          {
-            name: 'bump'
-            type: 'u8'
-          },
-          {
-            name: 'authority'
-            type: 'pubkey'
-          },
-          {
-            name: 'market'
-            type: 'pubkey'
-          },
-          {
-            name: 'deposited'
-            type: 'u64'
-          },
-          {
-            name: 'withdrawn'
-            type: 'u64'
-          },
-          {
-            name: 'netBalance'
-            type: 'u64'
-          },
-          {
-            name: 'projectAvailable'
-            type: 'u64'
-          },
-          {
-            name: 'projectClaimed'
-            type: 'u64'
-          },
-          {
-            name: 'nftHoldersAvailable'
-            type: 'u64'
-          },
-          {
-            name: 'nftHoldersClaimed'
-            type: 'u64'
-          },
-          {
-            name: 'marketAvailable'
-            type: 'u64'
-          },
-          {
-            name: 'marketClaimed'
-            type: 'u64'
-          },
-          {
-            name: 'padding'
-            type: {
-              array: ['u8', 60]
-            }
-          }
-        ]
-      }
-    },
-    {
       name: 'initializeMarketArgs'
       type: {
         kind: 'struct'
@@ -2503,15 +2331,7 @@ export type TriadProtocol = {
           {
             name: 'marketId'
             type: 'u64'
-          }
-        ]
-      }
-    },
-    {
-      name: 'initializeQuestionArgs'
-      type: {
-        kind: 'struct'
-        fields: [
+          },
           {
             name: 'question'
             type: {
@@ -2673,6 +2493,197 @@ export type TriadProtocol = {
             name: 'padding'
             type: {
               array: ['u8', 200]
+            }
+          }
+        ]
+      }
+    },
+    {
+      name: 'marketUpdate'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'marketId'
+            type: 'u64'
+          },
+          {
+            name: 'question'
+            type: 'string'
+          },
+          {
+            name: 'startTime'
+            type: 'i64'
+          },
+          {
+            name: 'endTime'
+            type: 'i64'
+          },
+          {
+            name: 'hypeLiquidity'
+            type: 'u64'
+          },
+          {
+            name: 'flopLiquidity'
+            type: 'u64'
+          },
+          {
+            name: 'winningDirection'
+            type: {
+              defined: {
+                name: 'winningDirection'
+              }
+            }
+          },
+          {
+            name: 'finalHypePrice'
+            type: 'u64'
+          },
+          {
+            name: 'finalFlopPrice'
+            type: 'u64'
+          },
+          {
+            name: 'timestamp'
+            type: 'i64'
+          },
+          {
+            name: 'totalHypeShares'
+            type: 'u64'
+          },
+          {
+            name: 'totalFlopShares'
+            type: 'u64'
+          }
+        ]
+      }
+    },
+    {
+      name: 'marketV2'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'bump'
+            type: 'u8'
+          },
+          {
+            name: 'authority'
+            type: 'pubkey'
+          },
+          {
+            name: 'marketId'
+            docs: ['Unique identifier for the market']
+            type: 'u64'
+          },
+          {
+            name: 'hypePrice'
+            type: 'u64'
+          },
+          {
+            name: 'flopPrice'
+            type: 'u64'
+          },
+          {
+            name: 'hypeLiquidity'
+            docs: ['Total liquidity for Hype (in TRD)']
+            type: 'u64'
+          },
+          {
+            name: 'flopLiquidity'
+            docs: ['Total liquidity for Flop (in TRD)']
+            type: 'u64'
+          },
+          {
+            name: 'hypeShares'
+            docs: ['Total number of Hype shares issued']
+            type: 'u64'
+          },
+          {
+            name: 'flopShares'
+            docs: ['Total number of Flop shares issued']
+            type: 'u64'
+          },
+          {
+            name: 'volume'
+            docs: ['Total trading volume (in TRD)']
+            type: 'u64'
+          },
+          {
+            name: 'mint'
+            docs: ['Mint $TRD token']
+            type: 'pubkey'
+          },
+          {
+            name: 'updateTs'
+            type: 'i64'
+          },
+          {
+            name: 'openedOrders'
+            docs: ['Total number of open orders in this market']
+            type: 'u64'
+          },
+          {
+            name: 'nextOrderId'
+            docs: ['Next available order ID']
+            type: 'u64'
+          },
+          {
+            name: 'feeBps'
+            docs: ['Fees applied to trades (in basis points, e.g., 2.131% fee)']
+            type: 'u16'
+          },
+          {
+            name: 'nftHoldersFeeAvailable'
+            type: 'u64'
+          },
+          {
+            name: 'nftHoldersFeeClaimed'
+            type: 'u64'
+          },
+          {
+            name: 'marketFeeAvailable'
+            type: 'u64'
+          },
+          {
+            name: 'marketFeeClaimed'
+            type: 'u64'
+          },
+          {
+            name: 'isActive'
+            docs: ['Whether the market is currently active for trading']
+            type: 'bool'
+          },
+          {
+            name: 'marketStart'
+            docs: [
+              'Index of the current week in the weekly_results array initialized with default values'
+            ]
+            type: 'i64'
+          },
+          {
+            name: 'marketEnd'
+            type: 'i64'
+          },
+          {
+            name: 'question'
+            docs: ['The question or prediction topic for the current week']
+            type: {
+              array: ['u8', 80]
+            }
+          },
+          {
+            name: 'winningDirection'
+            type: {
+              defined: {
+                name: 'winningDirection'
+              }
+            }
+          },
+          {
+            name: 'padding'
+            type: {
+              array: ['u8', 100]
             }
           }
         ]
@@ -2964,10 +2975,6 @@ export type TriadProtocol = {
             type: 'u64'
           },
           {
-            name: 'marketPrice'
-            type: 'u64'
-          },
-          {
             name: 'direction'
             type: {
               defined: {
@@ -2978,104 +2985,6 @@ export type TriadProtocol = {
           {
             name: 'timestamp'
             type: 'i64'
-          },
-          {
-            name: 'comment'
-            type: {
-              option: {
-                array: ['u8', 64]
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      name: 'questionStatus'
-      type: {
-        kind: 'enum'
-        variants: [
-          {
-            name: 'resolved'
-          },
-          {
-            name: 'unresolved'
-          }
-        ]
-      }
-    },
-    {
-      name: 'questionUpdate'
-      type: {
-        kind: 'struct'
-        fields: [
-          {
-            name: 'marketId'
-            type: 'u64'
-          },
-          {
-            name: 'questionId'
-            type: 'u64'
-          },
-          {
-            name: 'question'
-            type: 'string'
-          },
-          {
-            name: 'startTime'
-            type: 'i64'
-          },
-          {
-            name: 'endTime'
-            type: 'i64'
-          },
-          {
-            name: 'hypeLiquidity'
-            type: 'u64'
-          },
-          {
-            name: 'flopLiquidity'
-            type: 'u64'
-          },
-          {
-            name: 'winningDirection'
-            type: {
-              defined: {
-                name: 'winningDirection'
-              }
-            }
-          },
-          {
-            name: 'marketPrice'
-            type: 'u64'
-          },
-          {
-            name: 'finalHypePrice'
-            type: 'u64'
-          },
-          {
-            name: 'finalFlopPrice'
-            type: 'u64'
-          },
-          {
-            name: 'timestamp'
-            type: 'i64'
-          },
-          {
-            name: 'totalHypeShares'
-            type: 'u64'
-          },
-          {
-            name: 'totalFlopShares'
-            type: 'u64'
-          },
-          {
-            name: 'status'
-            type: {
-              defined: {
-                name: 'questionStatus'
-              }
-            }
           }
         ]
       }

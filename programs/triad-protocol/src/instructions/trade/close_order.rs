@@ -3,7 +3,7 @@ use anchor_spl::token_2022::{ Token2022, transfer_checked, TransferChecked };
 use anchor_spl::{ associated_token::AssociatedToken, token_interface::{ Mint, TokenAccount } };
 
 use crate::{
-    state::{ Market, UserTrade, OrderStatus, OrderDirection, Order },
+    state::{ MarketV2, UserTrade, OrderStatus, OrderDirection, Order },
     errors::TriadProtocolError,
     events::OrderUpdate,
     constraints::is_authority_for_user_trade,
@@ -21,7 +21,7 @@ pub struct CloseOrder<'info> {
     pub user_trade: Box<Account<'info, UserTrade>>,
 
     #[account(mut)]
-    pub market: Box<Account<'info, Market>>,
+    pub market: Box<Account<'info, MarketV2>>,
 
     #[account(mut, constraint = mint.key() == market.mint)]
     pub mint: Box<InterfaceAccount<'info, Mint>>,
@@ -55,7 +55,8 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
     let ts = Clock::get()?.unix_timestamp;
 
     require!(market.is_active, TriadProtocolError::MarketInactive);
-    require!(market.current_question_start > 0, TriadProtocolError::QuestionPeriodNotStarted);
+    require!(market.market_start > 0, TriadProtocolError::QuestionPeriodNotStarted);
+    require!(market.market_end > ts, TriadProtocolError::QuestionPeriodEnded);
 
     let order_index = user_trade.orders
         .iter()
@@ -112,26 +113,22 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
             ctx.accounts.mint.decimals
         )?;
 
-        market.update_price(current_amount, new_price, order.direction, None, false)?;
+        market.update_price(current_amount, new_price, order.direction, false)?;
     }
 
     match order.direction {
         OrderDirection::Hype => {
-            market.total_hype_shares = market.total_hype_shares
-                .checked_sub(order.total_shares)
-                .unwrap();
+            market.hype_shares = market.hype_shares.checked_sub(order.total_shares).unwrap();
         }
         OrderDirection::Flop => {
-            market.total_flop_shares = market.total_flop_shares
-                .checked_sub(order.total_shares)
-                .unwrap();
+            market.flop_shares = market.flop_shares.checked_sub(order.total_shares).unwrap();
         }
     }
 
     user_trade.total_withdraws = user_trade.total_withdraws.checked_add(current_amount).unwrap();
 
-    market.total_volume = market.total_volume.checked_add(current_amount).unwrap();
-    market.open_orders_count = market.open_orders_count.checked_sub(1).unwrap();
+    market.volume = market.volume.checked_add(current_amount).unwrap();
+    market.opened_orders = market.opened_orders.checked_sub(1).unwrap();
     market.update_ts = ts;
 
     let total_amount = order.total_amount;

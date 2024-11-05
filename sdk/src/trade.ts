@@ -6,8 +6,7 @@ import {
   TransactionInstruction
 } from '@solana/web3.js'
 import {
-  FeeVault,
-  InitializeQuestionArgs,
+  InitializeMarketArgs,
   Market,
   OpenOrderArgs,
   OrderDirection
@@ -16,11 +15,7 @@ import { RpcOptions } from './types'
 import BN from 'bn.js'
 import { TRD_DECIMALS, TRD_MINT } from './utils/constants'
 import { accountToMarket, encodeString } from './utils/helpers'
-import {
-  getFeeVaultPDA,
-  getMarketPDA,
-  getUserTradePDA
-} from './utils/pda/trade'
+import { getMarketPDA, getUserTradePDA } from './utils/pda/trade'
 import { getUserPDA } from './utils/pda'
 import sendVersionedTransaction from './utils/sendVersionedTransaction'
 import sendTransactionWithOptions from './utils/sendTransactionWithOptions'
@@ -47,27 +42,6 @@ export default class Trade {
           accountToMarket(account, publicKey)
         )
       )
-  }
-
-  async getFeeVault(marketId: number): Promise<FeeVault> {
-    const feeVaultPDA = getFeeVaultPDA(this.program.programId, marketId)
-
-    const response = await this.program.account.feeVault.fetch(feeVaultPDA)
-
-    return {
-      bump: response.bump,
-      authority: response.authority,
-      market: response.market,
-      deposited: response.deposited.toString(),
-      withdrawn: response.withdrawn.toString(),
-      netBalance: response.netBalance.toString(),
-      projectAvailable: response.projectAvailable.toString(),
-      projectClaimed: response.projectClaimed.toString(),
-      nftHoldersAvailable: response.nftHoldersAvailable.toString(),
-      nftHoldersClaimed: response.nftHoldersClaimed.toString(),
-      marketAvailable: response.marketAvailable.toString(),
-      marketClaimed: response.marketClaimed.toString()
-    }
   }
 
   /**
@@ -114,14 +88,17 @@ export default class Trade {
    *
    */
   async initializeMarket(
-    { marketId, name }: { marketId: number; name: string },
+    { marketId, name, startTime, endTime, question }: InitializeMarketArgs,
     options?: RpcOptions
   ) {
     return sendTransactionWithOptions(
       this.program.methods
         .initializeMarket({
           marketId: new BN(marketId),
-          name: name
+          name: name,
+          question: encodeString(question, 80),
+          startTime: new BN(startTime),
+          endTime: new BN(endTime)
         })
         .accounts({
           signer: this.provider.publicKey,
@@ -147,7 +124,6 @@ export default class Trade {
     options?: RpcOptions
   ): Promise<string> {
     const marketPDA = getMarketPDA(this.program.programId, marketId)
-    const feeVualtPDA = getFeeVaultPDA(this.program.programId, marketId)
     const userTradePDA = getUserTradePDA(
       this.program.programId,
       this.provider.publicKey
@@ -207,7 +183,6 @@ export default class Trade {
         .accounts({
           signer: this.provider.publicKey,
           market: marketPDA,
-          feeVault: feeVualtPDA,
           userTrade: userTradePDA,
           mint: this.mint
         })
@@ -253,44 +228,14 @@ export default class Trade {
   }
 
   /**
-   * Initialize a new question for a market
+   * Resolve Market
    * @param marketId - The ID of the market
-   * @param question - The question to initialize
-   * @param startTime - The start time of the question
-   * @param endTime - The end time of the question
+   * @param winningDirection - The winning direction of the market
    *
    * @param options - RPC options
    *
    */
-  async initializeQuestion(
-    { marketId, question, startTime, endTime }: InitializeQuestionArgs,
-    options?: RpcOptions
-  ): Promise<string> {
-    const marketPDA = getMarketPDA(this.program.programId, marketId)
-
-    return sendTransactionWithOptions(
-      this.program.methods
-        .initializeQuestion({
-          question: encodeString(question, 80),
-          startTime: new BN(startTime),
-          endTime: new BN(endTime)
-        })
-        .accounts({
-          signer: this.provider.publicKey,
-          market: marketPDA
-        }),
-      options
-    )
-  }
-
-  /**
-   * Resolve the current question for a market
-   * @param marketId - The ID of the market
-   *
-   * @param options - RPC options
-   *
-   */
-  async resolveQuestion(
+  async resolveMarket(
     {
       marketId,
       winningDirection
@@ -312,7 +257,7 @@ export default class Trade {
     const marketPDA = getMarketPDA(this.program.programId, marketId)
 
     const method = this.program.methods
-      .resolveQuestion(winningDirection)
+      .resolveMarket(winningDirection)
       .accounts({
         signer: this.provider.publicKey,
         market: marketPDA
@@ -396,13 +341,11 @@ export default class Trade {
     options?: RpcOptions
   ): Promise<string> {
     const marketPDA = getMarketPDA(this.program.programId, marketId)
-    const feeVaultPDA = getFeeVaultPDA(this.program.programId, marketId)
 
     return sendTransactionWithOptions(
       this.program.methods.collectFee().accounts({
         signer: this.provider.publicKey,
         market: marketPDA,
-        feeVault: feeVaultPDA,
         mint: this.mint
       }),
       options

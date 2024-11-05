@@ -322,21 +322,17 @@
           "writable": true
         },
         {
-          "name": "fee_vault",
-          "writable": true
-        },
-        {
           "name": "mint",
           "writable": true
         },
         {
-          "name": "fee_vault_ata",
+          "name": "market_ata",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "account",
-                "path": "fee_vault"
+                "path": "market"
               },
               {
                 "kind": "account",
@@ -511,29 +507,13 @@
           "writable": true
         },
         {
-          "name": "fee_vault",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [102, 101, 101, 95, 118, 97, 117, 108, 116]
-              },
-              {
-                "kind": "arg",
-                "path": "args.market_id"
-              }
-            ]
-          }
-        },
-        {
-          "name": "fee_ata",
+          "name": "market_ata",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "account",
-                "path": "fee_vault"
+                "path": "market"
               },
               {
                 "kind": "account",
@@ -579,35 +559,6 @@
       ]
     },
     {
-      "name": "initialize_question",
-      "discriminator": [245, 151, 106, 188, 88, 44, 65, 212],
-      "accounts": [
-        {
-          "name": "signer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "market",
-          "writable": true
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "args",
-          "type": {
-            "defined": {
-              "name": "InitializeQuestionArgs"
-            }
-          }
-        }
-      ]
-    },
-    {
       "name": "open_order",
       "discriminator": [206, 88, 88, 143, 38, 136, 50, 224],
       "accounts": [
@@ -622,10 +573,6 @@
         },
         {
           "name": "market",
-          "writable": true
-        },
-        {
-          "name": "fee_vault",
           "writable": true
         },
         {
@@ -668,34 +615,6 @@
               {
                 "kind": "account",
                 "path": "market"
-              },
-              {
-                "kind": "account",
-                "path": "token_program"
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
-              ]
-            }
-          }
-        },
-        {
-          "name": "fee_ata",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "fee_vault"
               },
               {
                 "kind": "account",
@@ -777,8 +696,8 @@
       "args": []
     },
     {
-      "name": "resolve_question",
-      "discriminator": [52, 32, 224, 179, 180, 8, 0, 246],
+      "name": "resolve_market",
+      "discriminator": [155, 23, 80, 173, 46, 74, 23, 239],
       "accounts": [
         {
           "name": "signer",
@@ -1445,12 +1364,12 @@
   ],
   "accounts": [
     {
-      "name": "FeeVault",
-      "discriminator": [192, 178, 69, 232, 58, 149, 157, 132]
-    },
-    {
       "name": "Market",
       "discriminator": [219, 190, 213, 55, 0, 227, 198, 154]
+    },
+    {
+      "name": "MarketV2",
+      "discriminator": [27, 60, 50, 75, 191, 193, 86, 227]
     },
     {
       "name": "StakeV2",
@@ -1483,16 +1402,16 @@
   ],
   "events": [
     {
+      "name": "MarketUpdate",
+      "discriminator": [170, 101, 124, 32, 249, 253, 251, 96]
+    },
+    {
       "name": "OrderUpdate",
       "discriminator": [97, 239, 148, 96, 83, 234, 245, 14]
     },
     {
       "name": "PriceUpdate",
       "discriminator": [222, 51, 180, 226, 165, 188, 203, 54]
-    },
-    {
-      "name": "QuestionUpdate",
-      "discriminator": [110, 108, 240, 86, 176, 226, 54, 113]
     },
     {
       "name": "StakeRewards",
@@ -1786,68 +1705,6 @@
       }
     },
     {
-      "name": "FeeVault",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "bump",
-            "type": "u8"
-          },
-          {
-            "name": "authority",
-            "type": "pubkey"
-          },
-          {
-            "name": "market",
-            "type": "pubkey"
-          },
-          {
-            "name": "deposited",
-            "type": "u64"
-          },
-          {
-            "name": "withdrawn",
-            "type": "u64"
-          },
-          {
-            "name": "net_balance",
-            "type": "u64"
-          },
-          {
-            "name": "project_available",
-            "type": "u64"
-          },
-          {
-            "name": "project_claimed",
-            "type": "u64"
-          },
-          {
-            "name": "nft_holders_available",
-            "type": "u64"
-          },
-          {
-            "name": "nft_holders_claimed",
-            "type": "u64"
-          },
-          {
-            "name": "market_available",
-            "type": "u64"
-          },
-          {
-            "name": "market_claimed",
-            "type": "u64"
-          },
-          {
-            "name": "padding",
-            "type": {
-              "array": ["u8", 60]
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "InitializeMarketArgs",
       "type": {
         "kind": "struct",
@@ -1859,15 +1716,7 @@
           {
             "name": "market_id",
             "type": "u64"
-          }
-        ]
-      }
-    },
-    {
-      "name": "InitializeQuestionArgs",
-      "type": {
-        "kind": "struct",
-        "fields": [
+          },
           {
             "name": "question",
             "type": {
@@ -2031,6 +1880,199 @@
             "name": "padding",
             "type": {
               "array": ["u8", 200]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketUpdate",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "market_id",
+            "type": "u64"
+          },
+          {
+            "name": "question",
+            "type": "string"
+          },
+          {
+            "name": "start_time",
+            "type": "i64"
+          },
+          {
+            "name": "end_time",
+            "type": "i64"
+          },
+          {
+            "name": "hype_liquidity",
+            "type": "u64"
+          },
+          {
+            "name": "flop_liquidity",
+            "type": "u64"
+          },
+          {
+            "name": "winning_direction",
+            "type": {
+              "defined": {
+                "name": "WinningDirection"
+              }
+            }
+          },
+          {
+            "name": "final_hype_price",
+            "type": "u64"
+          },
+          {
+            "name": "final_flop_price",
+            "type": "u64"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "total_hype_shares",
+            "type": "u64"
+          },
+          {
+            "name": "total_flop_shares",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "MarketV2",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "market_id",
+            "docs": ["Unique identifier for the market"],
+            "type": "u64"
+          },
+          {
+            "name": "hype_price",
+            "type": "u64"
+          },
+          {
+            "name": "flop_price",
+            "type": "u64"
+          },
+          {
+            "name": "hype_liquidity",
+            "docs": ["Total liquidity for Hype (in TRD)"],
+            "type": "u64"
+          },
+          {
+            "name": "flop_liquidity",
+            "docs": ["Total liquidity for Flop (in TRD)"],
+            "type": "u64"
+          },
+          {
+            "name": "hype_shares",
+            "docs": ["Total number of Hype shares issued"],
+            "type": "u64"
+          },
+          {
+            "name": "flop_shares",
+            "docs": ["Total number of Flop shares issued"],
+            "type": "u64"
+          },
+          {
+            "name": "volume",
+            "docs": ["Total trading volume (in TRD)"],
+            "type": "u64"
+          },
+          {
+            "name": "mint",
+            "docs": ["Mint $TRD token"],
+            "type": "pubkey"
+          },
+          {
+            "name": "update_ts",
+            "type": "i64"
+          },
+          {
+            "name": "opened_orders",
+            "docs": ["Total number of open orders in this market"],
+            "type": "u64"
+          },
+          {
+            "name": "next_order_id",
+            "docs": ["Next available order ID"],
+            "type": "u64"
+          },
+          {
+            "name": "fee_bps",
+            "docs": [
+              "Fees applied to trades (in basis points, e.g., 2.131% fee)"
+            ],
+            "type": "u16"
+          },
+          {
+            "name": "nft_holders_fee_available",
+            "type": "u64"
+          },
+          {
+            "name": "nft_holders_fee_claimed",
+            "type": "u64"
+          },
+          {
+            "name": "market_fee_available",
+            "type": "u64"
+          },
+          {
+            "name": "market_fee_claimed",
+            "type": "u64"
+          },
+          {
+            "name": "is_active",
+            "docs": ["Whether the market is currently active for trading"],
+            "type": "bool"
+          },
+          {
+            "name": "market_start",
+            "docs": [
+              "Index of the current week in the weekly_results array initialized with default values"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "market_end",
+            "type": "i64"
+          },
+          {
+            "name": "question",
+            "docs": ["The question or prediction topic for the current week"],
+            "type": {
+              "array": ["u8", 80]
+            }
+          },
+          {
+            "name": "winning_direction",
+            "type": {
+              "defined": {
+                "name": "WinningDirection"
+              }
+            }
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": ["u8", 100]
             }
           }
         ]
@@ -2322,10 +2364,6 @@
             "type": "u64"
           },
           {
-            "name": "market_price",
-            "type": "u64"
-          },
-          {
             "name": "direction",
             "type": {
               "defined": {
@@ -2336,104 +2374,6 @@
           {
             "name": "timestamp",
             "type": "i64"
-          },
-          {
-            "name": "comment",
-            "type": {
-              "option": {
-                "array": ["u8", 64]
-              }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "name": "QuestionStatus",
-      "type": {
-        "kind": "enum",
-        "variants": [
-          {
-            "name": "Resolved"
-          },
-          {
-            "name": "Unresolved"
-          }
-        ]
-      }
-    },
-    {
-      "name": "QuestionUpdate",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "market_id",
-            "type": "u64"
-          },
-          {
-            "name": "question_id",
-            "type": "u64"
-          },
-          {
-            "name": "question",
-            "type": "string"
-          },
-          {
-            "name": "start_time",
-            "type": "i64"
-          },
-          {
-            "name": "end_time",
-            "type": "i64"
-          },
-          {
-            "name": "hype_liquidity",
-            "type": "u64"
-          },
-          {
-            "name": "flop_liquidity",
-            "type": "u64"
-          },
-          {
-            "name": "winning_direction",
-            "type": {
-              "defined": {
-                "name": "WinningDirection"
-              }
-            }
-          },
-          {
-            "name": "market_price",
-            "type": "u64"
-          },
-          {
-            "name": "final_hype_price",
-            "type": "u64"
-          },
-          {
-            "name": "final_flop_price",
-            "type": "u64"
-          },
-          {
-            "name": "timestamp",
-            "type": "i64"
-          },
-          {
-            "name": "total_hype_shares",
-            "type": "u64"
-          },
-          {
-            "name": "total_flop_shares",
-            "type": "u64"
-          },
-          {
-            "name": "status",
-            "type": {
-              "defined": {
-                "name": "QuestionStatus"
-              }
-            }
           }
         ]
       }

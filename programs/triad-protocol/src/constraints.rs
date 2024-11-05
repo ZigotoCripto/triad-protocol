@@ -1,14 +1,6 @@
 use std::str::FromStr;
 
-use crate::{
-    constants::{ ADMIN, VERIFIER },
-    User,
-    UserTrade,
-    StakeV2,
-    StakeVault,
-    FeeVault,
-    Market,
-};
+use crate::{ constants::{ ADMIN, VERIFIER }, User, UserTrade, StakeV2, StakeVault };
 
 use anchor_lang::prelude::*;
 
@@ -29,13 +21,6 @@ pub fn is_authority_for_user_trade(
     signer: &Signer
 ) -> anchor_lang::Result<bool> {
     Ok(user_trade.authority.eq(signer.key))
-}
-
-pub fn is_fee_vault_for_market(
-    fee_vault: &Account<FeeVault>,
-    market: &Account<Market>
-) -> anchor_lang::Result<bool> {
-    Ok(fee_vault.market.eq(&market.key()))
 }
 
 pub fn is_authority_for_stake(
