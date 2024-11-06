@@ -5,7 +5,6 @@ export type Market = {
   bump: number
   authority: string
   marketId: string
-  name: string
   hypePrice: string
   flopPrice: string
   hypeLiquidity: string
@@ -18,9 +17,7 @@ export type Market = {
   openedOrders: string
   nextOrderId: string
   feeBps: number
-  feeVault: string
   isActive: boolean
-  marketPrice: string
   nftHoldersFeeAvailable: string
   nftHoldersFeeClaimed: string
   marketFeeAvailable: string

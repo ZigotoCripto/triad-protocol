@@ -91,13 +91,9 @@ pub fn claim_stake_rewards(
     let current_time = Clock::get()?.unix_timestamp;
     let seconds_staked = current_time.checked_sub(last_claim).unwrap();
 
-    let mut amount_base = 6.0;
+    let mut amount_base = 1.0;
 
-    if stake.claimed_ts > 1727863429 || stake.init_ts > 1727863429 {
-        amount_base = 1.0;
-    }
-
-    if (stake.claimed_ts < 1727863429 || stake.init_ts < 1727863429) && stake.boost {
+    if stake.boost {
         amount_base = 3.0;
     }
 

@@ -14,7 +14,7 @@ import {
 import { RpcOptions } from './types'
 import BN from 'bn.js'
 import { TRD_DECIMALS, TRD_MINT } from './utils/constants'
-import { accountToMarketV1, encodeString } from './utils/helpers'
+import { accountToMarketV1, encodeString, formatMarket } from './utils/helpers'
 import { getMarketPDA, getUserTradePDA } from './utils/pda/trade'
 import { getUserPDA } from './utils/pda'
 import sendVersionedTransaction from './utils/sendVersionedTransaction'
@@ -35,13 +35,23 @@ export default class Trade {
    * Get all Markets
    */
   async getAllMarkets(): Promise<Market[]> {
-    return this.program.account.market
+    const marketV1 = await this.program.account.market
       .all()
       .then((markets) =>
         markets.map(({ account, publicKey }) =>
           accountToMarketV1(account, publicKey)
         )
       )
+
+    const marketV2 = await this.program.account.marketV2
+      .all()
+      .then((markets) =>
+        markets.map(({ account, publicKey }) =>
+          formatMarket(account, publicKey)
+        )
+      )
+
+    return [...marketV1, ...marketV2]
   }
 
   /**
@@ -52,9 +62,9 @@ export default class Trade {
   async getMarketById(marketId: number): Promise<Market> {
     const marketPDA = getMarketPDA(this.program.programId, marketId)
 
-    const response = await this.program.account.market.fetch(marketPDA)
+    const response = await this.program.account.marketV2.fetch(marketPDA)
 
-    return accountToMarketV1(response, marketPDA)
+    return formatMarket(response, marketPDA)
   }
 
   /**
@@ -63,9 +73,9 @@ export default class Trade {
    *
    */
   async getMarketByAddress(address: PublicKey): Promise<Market> {
-    const account = await this.program.account.market.fetch(address)
+    const account = await this.program.account.marketV2.fetch(address)
 
-    return accountToMarketV1(account, address)
+    return formatMarket(account, address)
   }
 
   /**

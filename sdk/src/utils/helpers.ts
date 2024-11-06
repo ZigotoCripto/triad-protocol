@@ -66,13 +66,43 @@ export const formatUser = (user: any): User => {
   }
 }
 
+export const formatMarket = (account: any, address: PublicKey): Market => {
+  return {
+    bump: account.bump,
+    address: address.toString(),
+    authority: account.authority.toString(),
+    marketId: account.marketId.toString(),
+    hypePrice: account.hypePrice.toString(),
+    flopPrice: account.flopPrice.toString(),
+    hypeLiquidity: account.hypeLiquidity.toString(),
+    flopLiquidity: account.flopLiquidity.toString(),
+    hypeShares: account.hypeShares.toString(),
+    flopShares: account.flopShares.toString(),
+    volume: account.volume.toString(),
+    mint: account.mint.toString(),
+    updateTs: account.updateTs.toString(),
+    openedOrders: account.openedOrders.toString(),
+    nextOrderId: account.nextOrderId.toString(),
+    feeBps: account.feeBps,
+    isActive: account.isActive,
+    marketStart: account.marketStart.toString(),
+    marketEnd: account.marketEnd.toString(),
+    question: Buffer.from(account.question).toString().replace(/\0+$/, ''),
+    nftHoldersFeeAvailable: account.nftHoldersFeeAvailable.toString(),
+    nftHoldersFeeClaimed: account.nftHoldersFeeClaimed.toString(),
+    marketFeeAvailable: account.marketFeeAvailable.toString(),
+    marketFeeClaimed: account.marketFeeClaimed.toString(),
+    winningDirection:
+      WinningDirection[Object.keys(account.winningDirection)[0].toUpperCase()]
+  }
+}
+
 export const accountToMarketV1 = (account: any, address: PublicKey): Market => {
   return {
     bump: account.bump,
     address: address.toString(),
     authority: account.authority.toString(),
     marketId: account.marketId.toString(),
-    name: account.name,
     hypePrice: account.hypePrice.toString(),
     flopPrice: account.flopPrice.toString(),
     hypeLiquidity: account.hypeLiquidity.toString(),
@@ -85,9 +115,7 @@ export const accountToMarketV1 = (account: any, address: PublicKey): Market => {
     openedOrders: account.openOrdersCount.toString(),
     nextOrderId: account.nextOrderId.toString(),
     feeBps: account.feeBps,
-    feeVault: account.feeVault.toBase58(),
     isActive: account.isActive,
-    marketPrice: account.marketPrice.toString(),
     marketStart: account.currentQuestionStart.toString(),
     marketEnd: account.currentQuestionEnd.toString(),
     question: Buffer.from(account.currentQuestion)
