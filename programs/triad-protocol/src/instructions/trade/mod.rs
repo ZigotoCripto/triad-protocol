@@ -1,19 +1,19 @@
 mod close_order;
 mod create_user_trade;
 mod initialize_market;
-mod initialize_question;
 mod open_order;
-mod resolve_question;
+mod resolve_market;
 mod settle_order;
 mod add_liquidity;
 mod collect_fee;
+mod payout_order;
 
 pub use close_order::*;
 pub use create_user_trade::*;
 pub use initialize_market::*;
-pub use initialize_question::*;
 pub use open_order::*;
-pub use resolve_question::*;
+pub use resolve_market::*;
 pub use settle_order::*;
 pub use add_liquidity::*;
 pub use collect_fee::*;
+pub use payout_order::*;

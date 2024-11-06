@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{ state::OrderDirection, events::PriceUpdate };
+use crate::state::WinningDirection;
 
 #[account]
 pub struct Market {
@@ -79,36 +79,10 @@ pub struct ResolvedQuestion {
     pub padding: [u8; 40],
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq)]
-pub enum WinningDirection {
-    None,
-    Hype,
-    Flop,
-}
-
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy)]
 pub enum QuestionStatus {
     Resolved,
     Unresolved,
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct InitializeMarketArgs {
-    pub name: String,
-    pub market_id: u64,
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct AddLiquidityArgs {
-    pub amount: u64,
-    pub direction: OrderDirection,
-}
-
-#[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct InitializeQuestionArgs {
-    pub question: [u8; 80],
-    pub start_time: i64,
-    pub end_time: i64,
 }
 
 impl Default for ResolvedQuestion {
@@ -169,91 +143,4 @@ impl Market {
     pub const PREFIX_SEED: &'static [u8] = b"market";
 
     pub const SPACE: usize = 8 + std::mem::size_of::<Self>();
-
-    pub fn next_order_id(&mut self) -> u64 {
-        let id = self.next_order_id;
-        self.next_order_id = self.next_order_id.wrapping_add(1);
-        id
-    }
-
-    pub fn update_price(
-        &mut self,
-        amount: u64,
-        future_price: u64,
-        direction: OrderDirection,
-        comment: Option<[u8; 64]>,
-        is_open: bool
-    ) -> Result<()> {
-        let current_price = match direction {
-            OrderDirection::Hype => self.hype_price,
-            OrderDirection::Flop => self.flop_price,
-        };
-
-        let price_diff = if future_price > current_price {
-            future_price - current_price
-        } else {
-            current_price - future_price
-        };
-
-        let price_adjustment = ((price_diff as f64) / 1.02) as u64;
-
-        let new_price = if is_open {
-            current_price.checked_add(price_adjustment).unwrap().clamp(1, 999_999)
-        } else {
-            current_price.checked_sub(price_adjustment).unwrap().clamp(1, 999_999)
-        };
-
-        match direction {
-            OrderDirection::Hype => {
-                self.hype_price = new_price.clamp(1, 999_999);
-
-                if is_open {
-                    self.hype_liquidity = self.hype_liquidity.checked_add(amount).unwrap();
-                } else {
-                    self.hype_liquidity = self.hype_liquidity.checked_sub(amount).unwrap();
-                }
-
-                self.flop_price = 1_000_000 - self.hype_price;
-            }
-            OrderDirection::Flop => {
-                self.flop_price = new_price.clamp(1, 999_999);
-
-                if is_open {
-                    self.flop_liquidity = self.flop_liquidity.checked_add(amount).unwrap();
-                } else {
-                    self.flop_liquidity = self.flop_liquidity.checked_sub(amount).unwrap();
-                }
-
-                self.hype_price = 1_000_000 - self.flop_price;
-            }
-        }
-
-        self.hype_price = self.hype_price.clamp(1, 999_999);
-        self.flop_price = self.flop_price.clamp(1, 999_999);
-
-        self.update_ts = Clock::get()?.unix_timestamp;
-        self.market_price = self.hype_price.max(self.flop_price);
-
-        emit!(PriceUpdate {
-            market_id: self.market_id,
-            hype_price: self.hype_price,
-            flop_price: self.flop_price,
-            direction,
-            market_price: self.market_price,
-            timestamp: Clock::get()?.unix_timestamp,
-            comment,
-        });
-
-        Ok(())
-    }
-
-    pub fn get_winning_direction(&self) -> Option<WinningDirection> {
-        if self.hype_price > self.flop_price {
-            Some(WinningDirection::Hype)
-        } else if self.flop_price > self.hype_price {
-            Some(WinningDirection::Flop)
-        } else {
-            None
-        }
-    }
 }

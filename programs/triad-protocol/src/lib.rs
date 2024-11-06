@@ -30,18 +30,11 @@ pub mod triad_protocol {
         instructions::collect_fee(ctx)
     }
 
-    pub fn initialize_question(
-        ctx: Context<InitializeQuestion>,
-        args: InitializeQuestionArgs
-    ) -> Result<()> {
-        instructions::initialize_question(ctx, args)
-    }
-
-    pub fn resolve_question(
-        ctx: Context<ResolveQuestion>,
+    pub fn resolve_market(
+        ctx: Context<ResolveMarket>,
         winning_direction: WinningDirection
     ) -> Result<()> {
-        instructions::resolve_question(ctx, winning_direction)
+        instructions::resolve_market(ctx, winning_direction)
     }
 
     pub fn add_liquidity(ctx: Context<AddLiquidity>, args: AddLiquidityArgs) -> Result<()> {

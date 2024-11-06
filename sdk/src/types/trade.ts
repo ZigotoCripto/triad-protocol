@@ -5,40 +5,27 @@ export type Market = {
   bump: number
   authority: string
   marketId: string
-  name: string
   hypePrice: string
   flopPrice: string
   hypeLiquidity: string
   flopLiquidity: string
-  totalHypeShares: string
-  totalFlopShares: string
-  totalVolume: string
+  hypeShares: string
+  flopShares: string
+  volume: string
   mint: string
-  ts: string
   updateTs: string
-  openOrdersCount: string
+  openedOrders: string
   nextOrderId: string
   feeBps: number
-  feeVault: string
   isActive: boolean
-  marketPrice: string
-  previousResolvedQuestion: ResolvedQuestion
-  currentQuestionId: string
-  currentQuestionStart: string
-  currentQuestionEnd: string
-  currentQuestion: string
-}
-
-export type ResolvedQuestion = {
+  nftHoldersFeeAvailable: string
+  nftHoldersFeeClaimed: string
+  marketFeeAvailable: string
+  marketFeeClaimed: string
+  marketStart: string
+  marketEnd: string
   question: string
-  startTime: string
-  endTime: string
-  hypeLiquidity: string
-  flopLiquidity: string
   winningDirection: WinningDirection
-  marketPrice: string
-  finalHypePrice: string
-  finalFlopPrice: string
 }
 
 export enum WinningDirection {
@@ -58,13 +45,6 @@ export type OrderStatus =
 
 export type OrderType = { limit: {} } | { market: {} }
 
-export type InitializeQuestionArgs = {
-  marketId: number
-  question: string
-  startTime: number
-  endTime: number
-}
-
 export type OpenOrderArgs = {
   marketId: number
   amount: number
@@ -73,17 +53,10 @@ export type OpenOrderArgs = {
   comment?: string
 }
 
-export type FeeVault = {
-  bump: number
-  authority: PublicKey
-  market: PublicKey
-  deposited: string
-  withdrawn: string
-  netBalance: string
-  projectAvailable: string
-  projectClaimed: string
-  nftHoldersAvailable: string
-  nftHoldersClaimed: string
-  marketAvailable: string
-  marketClaimed: string
+export type InitializeMarketArgs = {
+  marketId: number
+  name: string
+  startTime: number
+  endTime: number
+  question: string
 }

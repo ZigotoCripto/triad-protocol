@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token_2022::{ Token2022, transfer_checked, TransferChecked };
 use anchor_spl::{ associated_token::AssociatedToken, token_interface::{ Mint, TokenAccount } };
 
-use crate::{ state::{ Market, OrderDirection, AddLiquidityArgs }, errors::TriadProtocolError };
+use crate::{ state::{ MarketV2, OrderDirection, AddLiquidityArgs }, errors::TriadProtocolError };
 
 #[derive(Accounts)]
 #[instruction(args: AddLiquidityArgs)]
@@ -11,7 +11,7 @@ pub struct AddLiquidity<'info> {
     pub signer: Signer<'info>,
 
     #[account(mut, constraint = market.authority == signer.key())]
-    pub market: Box<Account<'info, Market>>,
+    pub market: Box<Account<'info, MarketV2>>,
 
     #[account(mut, constraint = mint.key() == market.mint)]
     pub mint: Box<InterfaceAccount<'info, Mint>>,
