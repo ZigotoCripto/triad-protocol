@@ -58,7 +58,7 @@ export default class Trade {
         )
       )
 
-    return [...marketV2]
+    return [...marketV1, ...marketV2]
   }
 
   /**
@@ -382,28 +382,10 @@ export default class Trade {
       parseFloat(market.nftHoldersFeeClaimed)
 
     const totalFee = marketFee + nftFee
-    const feeToSwap = totalFee / 1.12
-    const feeToVault = totalFee - feeToSwap
 
-    const userPDA = getTokenATA(this.provider.publicKey, this.mint)
-    const vaultPDA = getTokenATA(vault, this.mint)
-
-    if (totalFee < 10) {
-      throw new Error('Total fee is less than 10')
+    if (totalFee / 10 ** TRD_DECIMALS < 100) {
+      return
     }
-
-    ixs.push(
-      createTransferCheckedInstruction(
-        userPDA,
-        this.mint,
-        vaultPDA,
-        this.provider.publicKey,
-        parseInt(feeToVault.toFixed()),
-        TRD_DECIMALS,
-        [],
-        TOKEN_2022_PROGRAM_ID
-      )
-    )
 
     const {
       setupInstructions,
@@ -416,7 +398,7 @@ export default class Trade {
       wallet: this.provider.publicKey.toBase58(),
       inToken: TRD_MINT.toBase58(),
       outToken: SOL_MINT.toBase58(),
-      amount: parseInt(feeToSwap.toFixed())
+      amount: parseInt(totalFee.toFixed())
     })
 
     ixs.push(...setupInstructions)
@@ -436,12 +418,17 @@ export default class Trade {
       })
     )
 
-    return sendVersionedTransaction(
+    await sendVersionedTransaction(
       this.provider,
       ixs,
       options,
       undefined,
       addressLookupTableAccounts
     )
+
+    return {
+      feeToSwap: totalFee,
+      lamport: otherAmountThreshold as number
+    }
   }
 }
