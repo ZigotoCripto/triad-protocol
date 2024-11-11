@@ -41,7 +41,8 @@ pub struct MarketV2 {
     /// The question or prediction topic for the current week
     pub question: [u8; 80],
     pub winning_direction: WinningDirection,
-    pub padding: [u8; 100],
+    pub market_liquidity_at_start: u64,
+    pub padding: [u8; 92],
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq)]
@@ -93,7 +94,8 @@ impl Default for MarketV2 {
             market_fee_claimed: 0,
             winning_direction: WinningDirection::None,
             question: [0; 80],
-            padding: [0; 100],
+            market_liquidity_at_start: 4_000_000_000,
+            padding: [0; 92],
         }
     }
 }

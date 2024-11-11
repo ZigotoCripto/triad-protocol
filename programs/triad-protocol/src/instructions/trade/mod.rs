@@ -4,7 +4,6 @@ mod initialize_market;
 mod open_order;
 mod resolve_market;
 mod settle_order;
-mod add_liquidity;
 mod collect_fee;
 mod payout_order;
 
@@ -14,6 +13,5 @@ pub use initialize_market::*;
 pub use open_order::*;
 pub use resolve_market::*;
 pub use settle_order::*;
-pub use add_liquidity::*;
 pub use collect_fee::*;
 pub use payout_order::*;
