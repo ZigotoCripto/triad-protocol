@@ -103,14 +103,6 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
         med_price = (markets_liquidity as f64) / (market_shares as f64);
     }
 
-    msg!("Med Price {:?}", med_price);
-    msg!("Market Shares {:?}", market_shares);
-    msg!("Markets Liquidity {:?}", markets_liquidity);
-    msg!("Initial Liquidity {:?}", market_liquidity_at_start);
-    msg!("Order Shares {:?}", order.total_shares);
-    msg!("Is Winner {:?}", is_winner);
-    msg!("Order Amount {:?}", order.total_amount);
-
     let payout = if !is_winner {
         0
     } else {
@@ -119,6 +111,18 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
             (order.total_amount as f64);
         float_payout.round() as u64
     };
+
+    if is_winner {
+        msg!("Med Price {:?}", med_price);
+        msg!("Market Shares {:?}", market_shares);
+        msg!("Markets Liquidity {:?}", markets_liquidity);
+        msg!("Initial Liquidity {:?}", market_liquidity_at_start);
+        msg!("Order Shares {:?}", order.total_shares);
+        msg!("Is Winner {:?}", is_winner);
+        msg!("Order Amount {:?}", order.total_amount);
+
+        return Ok(());
+    }
 
     if payout > 0 && is_winner {
         let signer: &[&[&[u8]]] = &[&[b"market", &market.market_id.to_le_bytes(), &[market.bump]]];
