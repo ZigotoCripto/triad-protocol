@@ -75,17 +75,34 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
         _ => { (0, false) }
     };
 
-    let (market_shares, market_opposit_liquidity) = match market.winning_direction {
-        WinningDirection::Hype => (market.hype_shares, market.flop_liquidity),
-        WinningDirection::Flop => (market.flop_shares, market.hype_liquidity),
-        _ => (0, 0),
+    let (market_shares, market_opposit_liquidity, market_liquidity) = match
+        market.winning_direction
+    {
+        WinningDirection::Hype =>
+            (market.hype_shares, market.flop_liquidity, market.hype_liquidity),
+        WinningDirection::Flop =>
+            (market.flop_shares, market.hype_liquidity, market.flop_liquidity),
+        _ => (0, 0, 0),
     };
 
     let mut med_price = 1.0;
 
-    if market_shares > market_opposit_liquidity {
-        med_price = (market_opposit_liquidity as f64) / (market_shares as f64);
+    let markets_liquidity = market_liquidity
+        .checked_add(market_opposit_liquidity)
+        .unwrap()
+        .checked_sub(1_000_000_000)
+        .unwrap();
+
+    if market_shares > markets_liquidity {
+        med_price = (markets_liquidity as f64) / (market_shares as f64);
     }
+
+    msg!("Med Price {:?}", med_price);
+    msg!("Market Shares {:?}", market_shares);
+    msg!("Markets Liquidity {:?}", markets_liquidity);
+    msg!("Order Shares {:?}", order.total_shares);
+    msg!("Is Winner {:?}", is_winner);
+    msg!("Order Amount {:?}", order.total_amount);
 
     let payout = if !is_winner {
         0
