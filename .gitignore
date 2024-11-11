@@ -8,3 +8,4 @@ test-ledger
 dist
 stake-season-1
 local-test.ts
+fees-collected.json

@@ -74,8 +74,8 @@ impl Default for MarketV2 {
             market_id: 0,
             hype_price: 500_000, // Initial price set to 0.5 TRD
             flop_price: 500_000, // Initial price set to 0.5 TRD
-            hype_liquidity: 500_000_000,
-            flop_liquidity: 500_000_000,
+            hype_liquidity: 2_000_000_000,
+            flop_liquidity: 2_000_000_000,
             mint: Pubkey::default(),
             update_ts: 0,
             next_order_id: 0,

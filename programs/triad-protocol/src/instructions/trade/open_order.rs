@@ -166,7 +166,6 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
         total_amount: current_order.total_amount,
         pnl: 0,
         price: current_order.price,
-        comment: args.comment,
         refund_amount: None,
         is_question_winner: None,
     });

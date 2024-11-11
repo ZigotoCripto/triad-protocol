@@ -23,7 +23,6 @@ pub struct OrderUpdate {
     pub price: u64,
     pub total_shares: u64,
     pub total_amount: u64,
-    pub comment: Option<[u8; 64]>,
     pub refund_amount: Option<u64>,
     pub pnl: i64,
     pub timestamp: i64,

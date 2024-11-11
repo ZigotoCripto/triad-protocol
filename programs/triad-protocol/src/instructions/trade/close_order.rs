@@ -146,7 +146,6 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
         price: current_price,
         total_shares: order.total_shares,
         total_amount: order.total_amount,
-        comment: None,
         refund_amount: Some(current_amount),
         timestamp: ts,
         is_question_winner: None,
