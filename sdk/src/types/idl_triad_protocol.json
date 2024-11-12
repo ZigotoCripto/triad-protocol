@@ -822,135 +822,6 @@
       ]
     },
     {
-      "name": "stake_nft",
-      "discriminator": [38, 27, 66, 46, 69, 65, 151, 219],
-      "accounts": [
-        {
-          "name": "signer",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "stake_vault",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [115, 116, 97, 107, 101, 95, 118, 97, 117, 108, 116]
-              },
-              {
-                "kind": "arg",
-                "path": "args.stake_vault"
-              }
-            ]
-          }
-        },
-        {
-          "name": "stake",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [115, 116, 97, 107, 101]
-              },
-              {
-                "kind": "account",
-                "path": "signer"
-              },
-              {
-                "kind": "arg",
-                "path": "args.name"
-              }
-            ]
-          }
-        },
-        {
-          "name": "mint",
-          "writable": true
-        },
-        {
-          "name": "from_ata",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "signer"
-              },
-              {
-                "kind": "account",
-                "path": "token_program"
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
-              ]
-            }
-          }
-        },
-        {
-          "name": "to_ata",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "stake_vault"
-              },
-              {
-                "kind": "account",
-                "path": "token_program"
-              },
-              {
-                "kind": "account",
-                "path": "mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
-              ]
-            }
-          }
-        },
-        {
-          "name": "token_program",
-          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
-        },
-        {
-          "name": "associated_token_program",
-          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
-        },
-        {
-          "name": "system_program",
-          "address": "11111111111111111111111111111111"
-        }
-      ],
-      "args": [
-        {
-          "name": "args",
-          "type": {
-            "defined": {
-              "name": "StakeNFTArgs"
-            }
-          }
-        }
-      ]
-    },
-    {
       "name": "stake_token",
       "discriminator": [191, 127, 193, 101, 37, 96, 87, 211],
       "accounts": [
@@ -1322,10 +1193,6 @@
           "signer": true
         },
         {
-          "name": "ticker",
-          "writable": true
-        },
-        {
           "name": "vault",
           "writable": true
         },
@@ -1380,10 +1247,6 @@
       "discriminator": [192, 112, 65, 125, 129, 151, 173, 226]
     },
     {
-      "name": "Ticker",
-      "discriminator": [214, 74, 184, 188, 214, 64, 251, 53]
-    },
-    {
       "name": "User",
       "discriminator": [159, 117, 95, 227, 239, 151, 58, 236]
     },
@@ -1421,236 +1284,101 @@
   "errors": [
     {
       "code": 6000,
-      "name": "InvalidAccount",
-      "msg": "Invalid account"
-    },
-    {
-      "code": 6001,
       "name": "Unauthorized",
       "msg": "Unauthorized access"
     },
     {
-      "code": 6002,
-      "name": "DepositFailed",
-      "msg": "Failed to deposit"
-    },
-    {
-      "code": 6003,
-      "name": "InvalidOwnerAuthority",
-      "msg": "Invalid owner authority"
-    },
-    {
-      "code": 6004,
+      "code": 6001,
       "name": "InvalidPosition",
       "msg": "Invalid position"
     },
     {
-      "code": 6005,
-      "name": "InvalidTickerPosition",
-      "msg": "Invalid ticker position"
-    },
-    {
-      "code": 6006,
-      "name": "NoFreePositionSlot",
-      "msg": "No free position slot"
-    },
-    {
-      "code": 6007,
-      "name": "InvalidMintAddress",
-      "msg": "Invalid mint address"
-    },
-    {
-      "code": 6008,
-      "name": "InvalidProfitShare",
-      "msg": "Invalid profit share"
-    },
-    {
-      "code": 6009,
-      "name": "InvalidDepositAmount",
-      "msg": "Invalid deposit amount"
-    },
-    {
-      "code": 6010,
+      "code": 6002,
       "name": "InvalidWithdrawAmount",
       "msg": "Invalid withdraw amount"
     },
     {
-      "code": 6011,
-      "name": "InvalidStakeVault",
-      "msg": "Invalid stake vault"
-    },
-    {
-      "code": 6012,
-      "name": "InvalidStakeVaultAuthority",
-      "msg": "Invalid stake vault authority"
-    },
-    {
-      "code": 6013,
-      "name": "InvalidStakeVaultAmount",
-      "msg": "Invalid stake vault amount"
-    },
-    {
-      "code": 6014,
+      "code": 6003,
       "name": "StakeLocked",
       "msg": "Stake is locked"
     },
     {
-      "code": 6015,
-      "name": "StakeVaultFull",
-      "msg": "Stake vault full"
-    },
-    {
-      "code": 6016,
-      "name": "InvalidMint",
-      "msg": "Invalid mint"
-    },
-    {
-      "code": 6017,
-      "name": "InvalidStakeVaultWeek",
-      "msg": "Invalid stake vault week"
-    },
-    {
-      "code": 6018,
-      "name": "RewardsAlreadyClaimed",
-      "msg": "Rewards already claimed"
-    },
-    {
-      "code": 6019,
-      "name": "StakeOverflow",
-      "msg": "Stake overflow"
-    },
-    {
-      "code": 6020,
-      "name": "SwapsReachedLimit",
-      "msg": "Swaps reached limit"
-    },
-    {
-      "code": 6021,
+      "code": 6004,
       "name": "InsufficientFunds",
       "msg": "Insufficient funds"
     },
     {
-      "code": 6022,
+      "code": 6005,
       "name": "NoRewardsAvailable",
       "msg": "No rewards available"
     },
     {
-      "code": 6023,
+      "code": 6006,
       "name": "InvalidPrice",
       "msg": "Invalid price"
     },
     {
-      "code": 6024,
-      "name": "InvalidOrderSize",
-      "msg": "Invalid order size"
-    },
-    {
-      "code": 6025,
-      "name": "MaxOpenOrdersReached",
-      "msg": "Maximum number of open orders reached"
-    },
-    {
-      "code": 6026,
+      "code": 6007,
       "name": "NoAvailableOrderSlot",
       "msg": "No available order slot"
     },
     {
-      "code": 6027,
+      "code": 6008,
       "name": "MarketInactive",
       "msg": "Market is inactive"
     },
     {
-      "code": 6028,
-      "name": "InvalidOrderType",
-      "msg": "Invalid order type"
-    },
-    {
-      "code": 6029,
-      "name": "InvalidOrderDirection",
-      "msg": "Invalid order direction"
-    },
-    {
-      "code": 6030,
+      "code": 6009,
       "name": "OrderNotFound",
       "msg": "Order not found"
     },
     {
-      "code": 6031,
-      "name": "InvalidOrderStatus",
-      "msg": "Invalid order status"
-    },
-    {
-      "code": 6032,
-      "name": "ArithmeticOverflow",
-      "msg": "Arithmetic overflow"
-    },
-    {
-      "code": 6033,
-      "name": "OrderSizeTooLarge",
-      "msg": "Order size too large"
-    },
-    {
-      "code": 6034,
-      "name": "QuestionPeriodNotEnded",
-      "msg": "Question period not ended"
-    },
-    {
-      "code": 6035,
-      "name": "InvalidStartTime",
-      "msg": "Invalid start time"
-    },
-    {
-      "code": 6036,
-      "name": "InvalidEndTime",
-      "msg": "Invalid end time"
-    },
-    {
-      "code": 6037,
+      "code": 6010,
       "name": "QuestionPeriodNotStarted",
       "msg": "Question period not started"
     },
     {
-      "code": 6038,
+      "code": 6011,
       "name": "QuestionPeriodEnded",
       "msg": "Question period ended"
     },
     {
-      "code": 6039,
+      "code": 6012,
       "name": "StakeVaultLocked",
       "msg": "Stake vault is locked"
     },
     {
-      "code": 6040,
+      "code": 6013,
       "name": "MarketStillActive",
       "msg": "Market still active"
     },
     {
-      "code": 6041,
+      "code": 6014,
       "name": "OrderNotOpen",
       "msg": "Order not open"
     },
     {
-      "code": 6042,
+      "code": 6015,
       "name": "HasOpenedOrders",
       "msg": "Has opened orders"
     },
     {
-      "code": 6043,
+      "code": 6016,
       "name": "InsufficientLiquidity",
       "msg": "Insufficient liquidity"
     },
     {
-      "code": 6044,
+      "code": 6017,
       "name": "MarketNotResolved",
       "msg": "Market not resolved"
     },
     {
-      "code": 6045,
+      "code": 6018,
       "name": "MarketAlreadyResolved",
       "msg": "Market already resolved"
     },
     {
-      "code": 6046,
+      "code": 6019,
       "name": "ConcurrentTransaction",
       "msg": "Concurrent transaction"
     }
@@ -2070,9 +1798,13 @@
             }
           },
           {
+            "name": "market_liquidity_at_start",
+            "type": "u64"
+          },
+          {
             "name": "padding",
             "type": {
-              "array": ["u8", 100]
+              "array": ["u8", 92]
             }
           }
         ]
@@ -2092,14 +1824,6 @@
             "type": {
               "defined": {
                 "name": "OrderDirection"
-              }
-            }
-          },
-          {
-            "name": "comment",
-            "type": {
-              "option": {
-                "array": ["u8", 64]
               }
             }
           }
@@ -2284,14 +2008,6 @@
             "type": "u64"
           },
           {
-            "name": "comment",
-            "type": {
-              "option": {
-                "array": ["u8", 64]
-              }
-            }
-          },
-          {
             "name": "refund_amount",
             "type": {
               "option": "u64"
@@ -2452,22 +2168,6 @@
             "type": {
               "array": ["u8", 40]
             }
-          }
-        ]
-      }
-    },
-    {
-      "name": "StakeNFTArgs",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "stake_vault",
-            "type": "string"
           }
         ]
       }
@@ -2650,46 +2350,6 @@
             "type": {
               "array": ["u8", 32]
             }
-          }
-        ]
-      }
-    },
-    {
-      "name": "Ticker",
-      "type": {
-        "kind": "struct",
-        "fields": [
-          {
-            "name": "init_ts",
-            "type": "i64"
-          },
-          {
-            "name": "updated_ts",
-            "type": "i64"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
-          },
-          {
-            "name": "authority",
-            "type": "pubkey"
-          },
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "protocol_program_id",
-            "type": "pubkey"
-          },
-          {
-            "name": "price",
-            "type": "u64"
-          },
-          {
-            "name": "vault",
-            "type": "pubkey"
           }
         ]
       }

@@ -1205,193 +1205,6 @@ export type TriadProtocol = {
       ]
     },
     {
-      name: 'stakeNft'
-      discriminator: [38, 27, 66, 46, 69, 65, 151, 219]
-      accounts: [
-        {
-          name: 'signer'
-          writable: true
-          signer: true
-        },
-        {
-          name: 'stakeVault'
-          writable: true
-          pda: {
-            seeds: [
-              {
-                kind: 'const'
-                value: [115, 116, 97, 107, 101, 95, 118, 97, 117, 108, 116]
-              },
-              {
-                kind: 'arg'
-                path: 'args.stake_vault'
-              }
-            ]
-          }
-        },
-        {
-          name: 'stake'
-          writable: true
-          pda: {
-            seeds: [
-              {
-                kind: 'const'
-                value: [115, 116, 97, 107, 101]
-              },
-              {
-                kind: 'account'
-                path: 'signer'
-              },
-              {
-                kind: 'arg'
-                path: 'args.name'
-              }
-            ]
-          }
-        },
-        {
-          name: 'mint'
-          writable: true
-        },
-        {
-          name: 'fromAta'
-          writable: true
-          pda: {
-            seeds: [
-              {
-                kind: 'account'
-                path: 'signer'
-              },
-              {
-                kind: 'account'
-                path: 'tokenProgram'
-              },
-              {
-                kind: 'account'
-                path: 'mint'
-              }
-            ]
-            program: {
-              kind: 'const'
-              value: [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
-          }
-        },
-        {
-          name: 'toAta'
-          writable: true
-          pda: {
-            seeds: [
-              {
-                kind: 'account'
-                path: 'stakeVault'
-              },
-              {
-                kind: 'account'
-                path: 'tokenProgram'
-              },
-              {
-                kind: 'account'
-                path: 'mint'
-              }
-            ]
-            program: {
-              kind: 'const'
-              value: [
-                140,
-                151,
-                37,
-                143,
-                78,
-                36,
-                137,
-                241,
-                187,
-                61,
-                16,
-                41,
-                20,
-                142,
-                13,
-                131,
-                11,
-                90,
-                19,
-                153,
-                218,
-                255,
-                16,
-                132,
-                4,
-                142,
-                123,
-                216,
-                219,
-                233,
-                248,
-                89
-              ]
-            }
-          }
-        },
-        {
-          name: 'tokenProgram'
-          address: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
-        },
-        {
-          name: 'associatedTokenProgram'
-          address: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
-        },
-        {
-          name: 'systemProgram'
-          address: '11111111111111111111111111111111'
-        }
-      ]
-      args: [
-        {
-          name: 'args'
-          type: {
-            defined: {
-              name: 'stakeNftArgs'
-            }
-          }
-        }
-      ]
-    },
-    {
       name: 'stakeToken'
       discriminator: [191, 127, 193, 101, 37, 96, 87, 211]
       accounts: [
@@ -1937,10 +1750,6 @@ export type TriadProtocol = {
           signer: true
         },
         {
-          name: 'ticker'
-          writable: true
-        },
-        {
           name: 'vault'
           writable: true
         },
@@ -1995,10 +1804,6 @@ export type TriadProtocol = {
       discriminator: [192, 112, 65, 125, 129, 151, 173, 226]
     },
     {
-      name: 'ticker'
-      discriminator: [214, 74, 184, 188, 214, 64, 251, 53]
-    },
-    {
       name: 'user'
       discriminator: [159, 117, 95, 227, 239, 151, 58, 236]
     },
@@ -2036,236 +1841,101 @@ export type TriadProtocol = {
   errors: [
     {
       code: 6000
-      name: 'invalidAccount'
-      msg: 'Invalid account'
-    },
-    {
-      code: 6001
       name: 'unauthorized'
       msg: 'Unauthorized access'
     },
     {
-      code: 6002
-      name: 'depositFailed'
-      msg: 'Failed to deposit'
-    },
-    {
-      code: 6003
-      name: 'invalidOwnerAuthority'
-      msg: 'Invalid owner authority'
-    },
-    {
-      code: 6004
+      code: 6001
       name: 'invalidPosition'
       msg: 'Invalid position'
     },
     {
-      code: 6005
-      name: 'invalidTickerPosition'
-      msg: 'Invalid ticker position'
-    },
-    {
-      code: 6006
-      name: 'noFreePositionSlot'
-      msg: 'No free position slot'
-    },
-    {
-      code: 6007
-      name: 'invalidMintAddress'
-      msg: 'Invalid mint address'
-    },
-    {
-      code: 6008
-      name: 'invalidProfitShare'
-      msg: 'Invalid profit share'
-    },
-    {
-      code: 6009
-      name: 'invalidDepositAmount'
-      msg: 'Invalid deposit amount'
-    },
-    {
-      code: 6010
+      code: 6002
       name: 'invalidWithdrawAmount'
       msg: 'Invalid withdraw amount'
     },
     {
-      code: 6011
-      name: 'invalidStakeVault'
-      msg: 'Invalid stake vault'
-    },
-    {
-      code: 6012
-      name: 'invalidStakeVaultAuthority'
-      msg: 'Invalid stake vault authority'
-    },
-    {
-      code: 6013
-      name: 'invalidStakeVaultAmount'
-      msg: 'Invalid stake vault amount'
-    },
-    {
-      code: 6014
+      code: 6003
       name: 'stakeLocked'
       msg: 'Stake is locked'
     },
     {
-      code: 6015
-      name: 'stakeVaultFull'
-      msg: 'Stake vault full'
-    },
-    {
-      code: 6016
-      name: 'invalidMint'
-      msg: 'Invalid mint'
-    },
-    {
-      code: 6017
-      name: 'invalidStakeVaultWeek'
-      msg: 'Invalid stake vault week'
-    },
-    {
-      code: 6018
-      name: 'rewardsAlreadyClaimed'
-      msg: 'Rewards already claimed'
-    },
-    {
-      code: 6019
-      name: 'stakeOverflow'
-      msg: 'Stake overflow'
-    },
-    {
-      code: 6020
-      name: 'swapsReachedLimit'
-      msg: 'Swaps reached limit'
-    },
-    {
-      code: 6021
+      code: 6004
       name: 'insufficientFunds'
       msg: 'Insufficient funds'
     },
     {
-      code: 6022
+      code: 6005
       name: 'noRewardsAvailable'
       msg: 'No rewards available'
     },
     {
-      code: 6023
+      code: 6006
       name: 'invalidPrice'
       msg: 'Invalid price'
     },
     {
-      code: 6024
-      name: 'invalidOrderSize'
-      msg: 'Invalid order size'
-    },
-    {
-      code: 6025
-      name: 'maxOpenOrdersReached'
-      msg: 'Maximum number of open orders reached'
-    },
-    {
-      code: 6026
+      code: 6007
       name: 'noAvailableOrderSlot'
       msg: 'No available order slot'
     },
     {
-      code: 6027
+      code: 6008
       name: 'marketInactive'
       msg: 'Market is inactive'
     },
     {
-      code: 6028
-      name: 'invalidOrderType'
-      msg: 'Invalid order type'
-    },
-    {
-      code: 6029
-      name: 'invalidOrderDirection'
-      msg: 'Invalid order direction'
-    },
-    {
-      code: 6030
+      code: 6009
       name: 'orderNotFound'
       msg: 'Order not found'
     },
     {
-      code: 6031
-      name: 'invalidOrderStatus'
-      msg: 'Invalid order status'
-    },
-    {
-      code: 6032
-      name: 'arithmeticOverflow'
-      msg: 'Arithmetic overflow'
-    },
-    {
-      code: 6033
-      name: 'orderSizeTooLarge'
-      msg: 'Order size too large'
-    },
-    {
-      code: 6034
-      name: 'questionPeriodNotEnded'
-      msg: 'Question period not ended'
-    },
-    {
-      code: 6035
-      name: 'invalidStartTime'
-      msg: 'Invalid start time'
-    },
-    {
-      code: 6036
-      name: 'invalidEndTime'
-      msg: 'Invalid end time'
-    },
-    {
-      code: 6037
+      code: 6010
       name: 'questionPeriodNotStarted'
       msg: 'Question period not started'
     },
     {
-      code: 6038
+      code: 6011
       name: 'questionPeriodEnded'
       msg: 'Question period ended'
     },
     {
-      code: 6039
+      code: 6012
       name: 'stakeVaultLocked'
       msg: 'Stake vault is locked'
     },
     {
-      code: 6040
+      code: 6013
       name: 'marketStillActive'
       msg: 'Market still active'
     },
     {
-      code: 6041
+      code: 6014
       name: 'orderNotOpen'
       msg: 'Order not open'
     },
     {
-      code: 6042
+      code: 6015
       name: 'hasOpenedOrders'
       msg: 'Has opened orders'
     },
     {
-      code: 6043
+      code: 6016
       name: 'insufficientLiquidity'
       msg: 'Insufficient liquidity'
     },
     {
-      code: 6044
+      code: 6017
       name: 'marketNotResolved'
       msg: 'Market not resolved'
     },
     {
-      code: 6045
+      code: 6018
       name: 'marketAlreadyResolved'
       msg: 'Market already resolved'
     },
     {
-      code: 6046
+      code: 6019
       name: 'concurrentTransaction'
       msg: 'Concurrent transaction'
     }
@@ -2681,9 +2351,13 @@ export type TriadProtocol = {
             }
           },
           {
+            name: 'marketLiquidityAtStart'
+            type: 'u64'
+          },
+          {
             name: 'padding'
             type: {
-              array: ['u8', 100]
+              array: ['u8', 92]
             }
           }
         ]
@@ -2703,14 +2377,6 @@ export type TriadProtocol = {
             type: {
               defined: {
                 name: 'orderDirection'
-              }
-            }
-          },
-          {
-            name: 'comment'
-            type: {
-              option: {
-                array: ['u8', 64]
               }
             }
           }
@@ -2895,14 +2561,6 @@ export type TriadProtocol = {
             type: 'u64'
           },
           {
-            name: 'comment'
-            type: {
-              option: {
-                array: ['u8', 64]
-              }
-            }
-          },
-          {
             name: 'refundAmount'
             type: {
               option: 'u64'
@@ -3063,22 +2721,6 @@ export type TriadProtocol = {
             type: {
               array: ['u8', 40]
             }
-          }
-        ]
-      }
-    },
-    {
-      name: 'stakeNftArgs'
-      type: {
-        kind: 'struct'
-        fields: [
-          {
-            name: 'name'
-            type: 'string'
-          },
-          {
-            name: 'stakeVault'
-            type: 'string'
           }
         ]
       }
@@ -3261,46 +2903,6 @@ export type TriadProtocol = {
             type: {
               array: ['u8', 32]
             }
-          }
-        ]
-      }
-    },
-    {
-      name: 'ticker'
-      type: {
-        kind: 'struct'
-        fields: [
-          {
-            name: 'initTs'
-            type: 'i64'
-          },
-          {
-            name: 'updatedTs'
-            type: 'i64'
-          },
-          {
-            name: 'bump'
-            type: 'u8'
-          },
-          {
-            name: 'authority'
-            type: 'pubkey'
-          },
-          {
-            name: 'name'
-            type: 'string'
-          },
-          {
-            name: 'protocolProgramId'
-            type: 'pubkey'
-          },
-          {
-            name: 'price'
-            type: 'u64'
-          },
-          {
-            name: 'vault'
-            type: 'pubkey'
           }
         ]
       }
