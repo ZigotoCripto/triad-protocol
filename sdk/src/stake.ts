@@ -154,35 +154,6 @@ export default class Stake {
   }
 
   /**
-   *  Stake NFT
-   *  @param mint - NFT mint
-   *  @param items - NFT items
-   *
-   */
-  async stakeNft({ wallet, items }: StakeNftArgs, options?: RpcOptions) {
-    let ixs: TransactionInstruction[] = []
-
-    for (let i = 0; i < items.length; i++) {
-      let item = items[i]
-
-      ixs.push(
-        await this.program.methods
-          .stakeNft({
-            name: item.name,
-            stakeVault: this.stakeVaultName
-          })
-          .accounts({
-            signer: wallet,
-            mint: item.mint
-          })
-          .instruction()
-      )
-    }
-
-    return sendVersionedTransaction(this.provider, ixs, options)
-  }
-
-  /**
    *  Stake Token
    *  @param name - Index
    *  @param wallet - User wallet

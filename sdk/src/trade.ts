@@ -137,7 +137,7 @@ export default class Trade {
    *
    */
   async openOrder(
-    { marketId, amount, direction, token, comment }: OpenOrderArgs,
+    { marketId, amount, direction, token }: OpenOrderArgs,
     options?: RpcOptions
   ): Promise<string> {
     const marketPDA = getMarketPDA(this.program.programId, marketId)
@@ -194,8 +194,7 @@ export default class Trade {
       await this.program.methods
         .openOrder({
           amount: new BN(amountInTRD),
-          direction: direction,
-          comment: encodeString(comment, 64)
+          direction: direction
         })
         .accounts({
           signer: this.provider.publicKey,

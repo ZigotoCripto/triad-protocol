@@ -56,10 +56,6 @@ export default class TriadProtocolClient {
       .sort((a, b) => b.referred - a.referred)
   }
 
-  async getTickers() {
-    return await this.program.account.ticker.all()
-  }
-
   /**
    * Check if user exists
    * @param username - User name
@@ -136,19 +132,15 @@ export default class TriadProtocolClient {
    *
    */
   async getUserPositionsWithAmount(wallet: PublicKey) {
-    const tickers = await this.program.account.ticker.all()
-
     const userPositions: PublicKey[] = []
 
-    for (const ticker of tickers) {
-      const userPositionPDA = getUserPositionPDA(
-        this.program.programId,
-        wallet,
-        ticker.publicKey
-      )
+    const userPositionPDA = getUserPositionPDA(
+      this.program.programId,
+      wallet,
+      new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+    )
 
-      userPositions.push(userPositionPDA)
-    }
+    userPositions.push(userPositionPDA)
 
     const userPositionsWithAmount =
       await this.program.account.userPosition.fetchMultiple(userPositions)
@@ -196,7 +188,6 @@ export default class TriadProtocolClient {
         userPosition: userPositionPDA,
         userTokenAccount,
         vault: vaultPDA,
-        ticker,
         vaultTokenAccount: VaultTokenAccountPDA
       }),
       options
