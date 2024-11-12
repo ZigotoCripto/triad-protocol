@@ -2,7 +2,9 @@ import { AnchorProvider, Program } from '@coral-xyz/anchor'
 import { TriadProtocol } from './types/triad_protocol'
 import {
   AddressLookupTableAccount,
+  ComputeBudgetProgram,
   PublicKey,
+  SystemProgram,
   TransactionInstruction
 } from '@solana/web3.js'
 import {
@@ -13,13 +15,18 @@ import {
 } from './types/trade'
 import { RpcOptions } from './types'
 import BN from 'bn.js'
-import { TRD_DECIMALS, TRD_MINT } from './utils/constants'
+import { SOL_MINT, TRD_DECIMALS, TRD_MINT } from './utils/constants'
 import { accountToMarketV1, encodeString, formatMarket } from './utils/helpers'
 import { getMarketPDA, getUserTradePDA } from './utils/pda/trade'
-import { getUserPDA } from './utils/pda'
+import { getTokenATA, getUserPDA } from './utils/pda'
 import sendVersionedTransaction from './utils/sendVersionedTransaction'
 import sendTransactionWithOptions from './utils/sendTransactionWithOptions'
 import { swap } from './utils/swap'
+import {
+  createTransferCheckedInstruction,
+  TOKEN_2022_PROGRAM_ID
+} from '@solana/spl-token'
+import { jupSwap } from './utils/jup-swap'
 
 export default class Trade {
   program: Program<TriadProtocol>
@@ -347,18 +354,81 @@ export default class Trade {
    *
    */
   async collectFee(
-    { marketId }: { marketId: number },
+    { marketId, vault }: { marketId: number; vault: PublicKey },
     options?: RpcOptions
-  ): Promise<string> {
+  ) {
     const marketPDA = getMarketPDA(this.program.programId, marketId)
 
-    return sendTransactionWithOptions(
-      this.program.methods.collectFee().accounts({
-        signer: this.provider.publicKey,
-        market: marketPDA,
-        mint: this.mint
-      }),
-      options
+    const ixs: TransactionInstruction[] = []
+
+    ixs.push(
+      await this.program.methods
+        .collectFee()
+        .accounts({
+          signer: this.provider.publicKey,
+          market: marketPDA,
+          mint: this.mint
+        })
+        .instruction()
     )
+
+    const market = await this.getMarketById(marketId)
+
+    const marketFee =
+      parseFloat(market.marketFeeAvailable) -
+      parseFloat(market.marketFeeClaimed)
+    const nftFee =
+      parseFloat(market.nftHoldersFeeAvailable) -
+      parseFloat(market.nftHoldersFeeClaimed)
+
+    const totalFee = marketFee + nftFee
+
+    if (totalFee / 10 ** TRD_DECIMALS < 100) {
+      return
+    }
+
+    const {
+      setupInstructions,
+      swapIxs,
+      addressLookupTableAccounts,
+      cleanupInstruction,
+      otherAmountThreshold
+    } = await jupSwap({
+      connection: this.provider.connection,
+      wallet: this.provider.publicKey.toBase58(),
+      inToken: TRD_MINT.toBase58(),
+      outToken: SOL_MINT.toBase58(),
+      amount: parseInt(totalFee.toFixed())
+    })
+
+    ixs.push(...setupInstructions)
+    ixs.push(
+      ComputeBudgetProgram.setComputeUnitLimit({
+        units: 500000
+      })
+    )
+    ixs.push(...swapIxs)
+    ixs.push(cleanupInstruction)
+
+    ixs.push(
+      SystemProgram.transfer({
+        fromPubkey: this.provider.publicKey,
+        toPubkey: vault,
+        lamports: otherAmountThreshold
+      })
+    )
+
+    await sendVersionedTransaction(
+      this.provider,
+      ixs,
+      options,
+      undefined,
+      addressLookupTableAccounts
+    )
+
+    return {
+      feeToSwap: totalFee,
+      lamport: otherAmountThreshold as number
+    }
   }
 }

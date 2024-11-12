@@ -36,7 +36,7 @@ pub fn request_withdraw_stake(ctx: Context<RequestWithdrawStake>) -> Result<()> 
 
     require!(stake.withdraw_ts == 0, TriadProtocolError::Unauthorized);
 
-    let mut days = 3;
+    let mut days = 0;
 
     if stake.mint.eq(&stake_vault.token_mint) {
         days = 7;

@@ -69,7 +69,6 @@ pub enum OrderType {
 pub struct OpenOrderArgs {
     pub amount: u64,
     pub direction: OrderDirection,
-    pub comment: Option<[u8; 64]>,
 }
 
 impl UserTrade {

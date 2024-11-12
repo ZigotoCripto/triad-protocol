@@ -148,7 +148,6 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
         price: order.price,
         total_shares: order.total_shares,
         total_amount: order.total_amount,
-        comment: None,
         refund_amount: Some(payout),
         timestamp: Clock::get()?.unix_timestamp,
         is_question_winner: Some(is_winner),

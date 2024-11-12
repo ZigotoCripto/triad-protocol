@@ -57,7 +57,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
     let ts = Clock::get()?.unix_timestamp;
 
     require!(market.is_active, TriadProtocolError::MarketInactive);
-    require!(market.market_start > 0, TriadProtocolError::QuestionPeriodNotStarted);
+    require!(ts > market.market_start, TriadProtocolError::QuestionPeriodNotStarted);
     require!(market.market_end > ts, TriadProtocolError::QuestionPeriodEnded);
 
     let (current_price, current_liquidity, otherside_current_liquidity) = match args.direction {
@@ -166,7 +166,6 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
         total_amount: current_order.total_amount,
         pnl: 0,
         price: current_order.price,
-        comment: args.comment,
         refund_amount: None,
         is_question_winner: None,
     });

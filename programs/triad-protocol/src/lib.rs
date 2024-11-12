@@ -61,10 +61,6 @@ pub mod triad_protocol {
         instructions::settle_order(ctx, order_id)
     }
 
-    pub fn stake_nft(ctx: Context<StakeNFT>, args: StakeNFTArgs) -> Result<()> {
-        instructions::stake_nft(ctx, args)
-    }
-
     pub fn stake_token(ctx: Context<StakeToken>, args: StakeTokenArgs) -> Result<()> {
         instructions::stake_token(ctx, args)
     }

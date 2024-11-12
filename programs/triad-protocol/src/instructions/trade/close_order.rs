@@ -55,7 +55,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
     let ts = Clock::get()?.unix_timestamp;
 
     require!(market.is_active, TriadProtocolError::MarketInactive);
-    require!(market.market_start > 0, TriadProtocolError::QuestionPeriodNotStarted);
+    require!(ts > market.market_start, TriadProtocolError::QuestionPeriodNotStarted);
     require!(market.market_end > ts, TriadProtocolError::QuestionPeriodEnded);
 
     let order_index = user_trade.orders
@@ -146,7 +146,6 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
         price: current_price,
         total_shares: order.total_shares,
         total_amount: order.total_amount,
-        comment: None,
         refund_amount: Some(current_amount),
         timestamp: ts,
         is_question_winner: None,

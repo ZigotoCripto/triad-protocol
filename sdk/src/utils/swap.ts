@@ -28,7 +28,7 @@ export const swap = async ({
   const formattedAmountIn = amount * 10 ** token.decimals
 
   const quoteResponse = await axios.get(
-    `https://quote-api.jup.ag/v6/quote?inputMint=${inToken}&outputMint=${TRD_MINT.toBase58()}&amount=${formattedAmountIn}&slippageBps=10`
+    `https://quote-api.jup.ag/v6/quote?inputMint=${inToken}&outputMint=${TRD_MINT.toBase58()}&amount=${formattedAmountIn}&slippageBps=30`
   )
 
   const { data: quoteData } = quoteResponse

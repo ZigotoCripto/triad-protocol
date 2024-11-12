@@ -60,6 +60,10 @@ pub fn claim_stake_rewards(
 
     require!(args.collections <= 5, TriadProtocolError::Unauthorized);
 
+    if !stake.mint.eq(&stake_vault.token_mint) && stake.claimed_ts >= 1731345422 {
+        return Err(TriadProtocolError::Unauthorized.into());
+    }
+
     let mut rank = args.rank;
     let collections = args.collections;
 

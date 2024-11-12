@@ -41,7 +41,8 @@ pub struct MarketV2 {
     /// The question or prediction topic for the current week
     pub question: [u8; 80],
     pub winning_direction: WinningDirection,
-    pub padding: [u8; 100],
+    pub market_liquidity_at_start: u64,
+    pub padding: [u8; 92],
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq)]
@@ -74,8 +75,8 @@ impl Default for MarketV2 {
             market_id: 0,
             hype_price: 500_000, // Initial price set to 0.5 TRD
             flop_price: 500_000, // Initial price set to 0.5 TRD
-            hype_liquidity: 500_000_000,
-            flop_liquidity: 500_000_000,
+            hype_liquidity: 5_000_000_000,
+            flop_liquidity: 5_000_000_000,
             mint: Pubkey::default(),
             update_ts: 0,
             next_order_id: 0,
@@ -93,7 +94,8 @@ impl Default for MarketV2 {
             market_fee_claimed: 0,
             winning_direction: WinningDirection::None,
             question: [0; 80],
-            padding: [0; 100],
+            market_liquidity_at_start: 10_000_000_000,
+            padding: [0; 92],
         }
     }
 }

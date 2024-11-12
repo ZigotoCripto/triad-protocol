@@ -1,6 +1,6 @@
 use crate::errors::TriadProtocolError;
 use crate::state::Vault;
-use crate::{ Position, Ticker, UserPosition };
+use crate::{ Position, UserPosition };
 use anchor_lang::prelude::*;
 use anchor_spl::token::{ self, Token, TokenAccount, Transfer };
 use anchor_spl::associated_token::AssociatedToken;
@@ -10,9 +10,6 @@ use anchor_spl::associated_token::AssociatedToken;
 pub struct WithdrawV1<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
-
-    #[account(mut)]
-    pub ticker: Account<'info, Ticker>,
 
     #[account(mut)]
     pub vault: Account<'info, Vault>,
@@ -47,11 +44,7 @@ pub fn withdraw_v1(ctx: Context<WithdrawV1>, position_index: u8) -> Result<()> {
         return Err(TriadProtocolError::InvalidPosition.into());
     }
 
-    let pnl =
-        (ctx.accounts.ticker.price - current_pubkey_position.entry_price) *
-        current_pubkey_position.amount;
-
-    let new_amount = current_pubkey_position.amount + pnl;
+    let new_amount = current_pubkey_position.amount;
 
     let seeds: &[&[&[u8]]] = &[
         &[b"vault", ctx.accounts.vault.ticker_address.as_ref(), &[ctx.accounts.vault.bump]],

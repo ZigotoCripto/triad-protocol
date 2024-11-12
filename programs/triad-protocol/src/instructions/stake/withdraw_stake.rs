@@ -60,7 +60,7 @@ pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
     let stake = &mut ctx.accounts.stake;
     let stake_vault = &mut ctx.accounts.stake_vault;
 
-    if stake.withdraw_ts > Clock::get()?.unix_timestamp {
+    if stake.withdraw_ts > Clock::get()?.unix_timestamp && stake.mint.eq(&stake_vault.token_mint) {
         return Err(TriadProtocolError::StakeLocked.into());
     }
 
@@ -92,7 +92,7 @@ pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
     )?;
 
     if is_token_stake {
-        stake_vault.token_staked -= stake.amount;
+        stake_vault.token_staked = stake_vault.token_staked.checked_sub(stake.amount).unwrap();
     } else {
         close_account(
             CpiContext::new_with_signer(
@@ -106,7 +106,7 @@ pub fn withdraw_stake(ctx: Context<WithdrawStake>) -> Result<()> {
             )
         )?;
 
-        stake_vault.nft_staked -= 1;
+        stake_vault.nft_staked = stake_vault.nft_staked.checked_sub(1).unwrap();
     }
 
     Ok(())
