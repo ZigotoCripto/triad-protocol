@@ -61,6 +61,10 @@ pub mod triad_protocol {
         instructions::settle_order(ctx, order_id)
     }
 
+    pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
+        instructions::payout_order(ctx, order_id)
+    }
+
     pub fn stake_token(ctx: Context<StakeToken>, args: StakeTokenArgs) -> Result<()> {
         instructions::stake_token(ctx, args)
     }

@@ -18,14 +18,10 @@ import BN from 'bn.js'
 import { SOL_MINT, TRD_DECIMALS, TRD_MINT } from './utils/constants'
 import { accountToMarketV1, encodeString, formatMarket } from './utils/helpers'
 import { getMarketPDA, getUserTradePDA } from './utils/pda/trade'
-import { getTokenATA, getUserPDA } from './utils/pda'
+import { getUserPDA } from './utils/pda'
 import sendVersionedTransaction from './utils/sendVersionedTransaction'
 import sendTransactionWithOptions from './utils/sendTransactionWithOptions'
 import { swap } from './utils/swap'
-import {
-  createTransferCheckedInstruction,
-  TOKEN_2022_PROGRAM_ID
-} from '@solana/spl-token'
 import { jupSwap } from './utils/jup-swap'
 
 export default class Trade {
@@ -429,5 +425,34 @@ export default class Trade {
       feeToSwap: totalFee,
       lamport: otherAmountThreshold as number
     }
+  }
+
+  /**
+   * Payout an order
+   * @param marketId - The ID of the market
+   * @param orderId - The ID of the order to payout
+   *
+   * @param options - RPC options
+   *
+   */
+  async payoutOrder(
+    { marketId, orderId }: { marketId: number; orderId: number },
+    options?: RpcOptions
+  ): Promise<string> {
+    const marketPDA = getMarketPDA(this.program.programId, marketId)
+    const userTradePDA = getUserTradePDA(
+      this.program.programId,
+      this.provider.publicKey
+    )
+
+    return sendTransactionWithOptions(
+      this.program.methods.payoutOrder(new BN(orderId)).accounts({
+        signer: this.provider.publicKey,
+        userTrade: userTradePDA,
+        market: marketPDA,
+        mint: this.mint
+      }),
+      options
+    )
   }
 }

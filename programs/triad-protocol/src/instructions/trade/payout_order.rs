@@ -66,60 +66,48 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
 
     require!(market.market_id == order.market_id, TriadProtocolError::OrderNotOpen);
 
-    let (shares, is_winner) = match (order.direction, market.winning_direction) {
+    let is_winner = match (order.direction, market.winning_direction) {
         | (OrderDirection::Hype, WinningDirection::Hype)
         | (OrderDirection::Flop, WinningDirection::Flop) => {
-            let winning_payout = order.total_shares;
-            (winning_payout, true)
+            true
         }
-        _ => { (0, false) }
+        _ => { false }
     };
 
-    let (market_shares, market_opposit_liquidity, market_liquidity) = match
-        market.winning_direction
-    {
-        WinningDirection::Hype =>
-            (market.hype_shares, market.flop_liquidity, market.hype_liquidity),
-        WinningDirection::Flop =>
-            (market.flop_shares, market.hype_liquidity, market.flop_liquidity),
-        _ => (0, 0, 0),
+    let (market_shares, market_opposit_liquidity) = match market.winning_direction {
+        WinningDirection::Hype => (market.hype_shares, market.flop_liquidity),
+        WinningDirection::Flop => (market.flop_shares, market.hype_liquidity),
+        _ => (0, 0),
     };
 
-    let mut med_price = 1.0;
-
-    let market_liquidity_at_start = if market.market_liquidity_at_start == 0 {
-        1_000_000_000
+    let market_initial_liquidity = if market.market_liquidity_at_start == 0 {
+        500_000_000
     } else {
-        market.market_liquidity_at_start
+        market.market_liquidity_at_start.checked_div(2).unwrap()
     };
 
-    let markets_liquidity = market_liquidity
-        .checked_add(market_opposit_liquidity)
-        .unwrap()
-        .checked_sub(market_liquidity_at_start)
-        .unwrap();
+    let mut payout = 0;
+    let market_liquidity = market_opposit_liquidity.checked_sub(market_initial_liquidity).unwrap();
+    let is_one_to_one = market_liquidity >= market_shares;
 
-    if market_shares > markets_liquidity {
-        med_price = (markets_liquidity as f64) / (market_shares as f64);
+    if is_winner && is_one_to_one {
+        payout = order.total_shares;
     }
 
-    let payout = if !is_winner {
-        0
-    } else {
-        let float_payout =
-            ((shares as f64) - (order.total_amount as f64)) * med_price +
-            (order.total_amount as f64);
-        float_payout.round() as u64
-    };
+    if is_winner && !is_one_to_one {
+        let shares_ratio = (order.total_shares as f64) / (market_shares as f64);
+        let additional_payout = (shares_ratio * (market_opposit_liquidity as f64)).round() as u64;
+
+        payout = additional_payout + order.total_amount;
+    }
 
     if is_winner {
-        msg!("Med Price {:?}", med_price);
         msg!("Market Shares {:?}", market_shares);
-        msg!("Markets Liquidity {:?}", markets_liquidity);
-        msg!("Initial Liquidity {:?}", market_liquidity_at_start);
+        msg!("Markets Liquidity {:?}", market_liquidity);
+        msg!("Initial Liquidity {:?}", market_initial_liquidity);
         msg!("Order Shares {:?}", order.total_shares);
-        msg!("Is Winner {:?}", is_winner);
         msg!("Order Amount {:?}", order.total_amount);
+        msg!("Payout {:?}", payout);
 
         return Ok(());
     }
@@ -146,12 +134,10 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
 
         msg!("Amount {:?}", order.total_amount);
         msg!("Market Shares {:?}", market_shares);
+        msg!("Total Shares {:?}", order.total_shares);
         msg!("Market Opposit Liquidity {:?}", market_opposit_liquidity);
-        msg!("Med Price {:?}", med_price);
         msg!("Payout {:?}", payout);
     }
-
-    let pnl = (payout as i64) - (order.total_amount as i64);
 
     user_trade.orders[order_index].status = OrderStatus::Closed;
     user_trade.opened_orders = user_trade.opened_orders.checked_sub(1).unwrap();
@@ -172,7 +158,7 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
         refund_amount: Some(payout),
         timestamp: Clock::get()?.unix_timestamp,
         is_question_winner: Some(is_winner),
-        pnl,
+        pnl: (payout as i64) - (order.total_amount as i64),
     });
 
     Ok(())

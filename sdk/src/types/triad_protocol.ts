@@ -985,6 +985,161 @@ export type TriadProtocol = {
       ]
     },
     {
+      name: 'payoutOrder'
+      discriminator: [247, 233, 158, 228, 63, 32, 236, 113]
+      accounts: [
+        {
+          name: 'signer'
+          writable: true
+          signer: true
+        },
+        {
+          name: 'userTrade'
+          writable: true
+        },
+        {
+          name: 'market'
+          writable: true
+        },
+        {
+          name: 'mint'
+          writable: true
+        },
+        {
+          name: 'userAta'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'account'
+                path: 'signer'
+              },
+              {
+                kind: 'account'
+                path: 'tokenProgram'
+              },
+              {
+                kind: 'account'
+                path: 'mint'
+              }
+            ]
+            program: {
+              kind: 'const'
+              value: [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          name: 'marketVault'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'account'
+                path: 'market'
+              },
+              {
+                kind: 'account'
+                path: 'tokenProgram'
+              },
+              {
+                kind: 'account'
+                path: 'mint'
+              }
+            ]
+            program: {
+              kind: 'const'
+              value: [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          name: 'tokenProgram'
+          address: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
+        },
+        {
+          name: 'associatedTokenProgram'
+          address: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
+        },
+        {
+          name: 'systemProgram'
+          address: '11111111111111111111111111111111'
+        }
+      ]
+      args: [
+        {
+          name: 'orderId'
+          type: 'u64'
+        }
+      ]
+    },
+    {
       name: 'requestWithdrawStake'
       discriminator: [175, 9, 77, 31, 145, 136, 30, 207]
       accounts: [
