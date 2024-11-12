@@ -26,6 +26,7 @@ export type Market = {
   marketEnd: string
   question: string
   winningDirection: WinningDirection
+  marketLiquidityAtStart: string
 }
 
 export enum WinningDirection {

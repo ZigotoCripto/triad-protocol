@@ -93,7 +93,11 @@ export const formatMarket = (account: any, address: PublicKey): Market => {
     marketFeeAvailable: account.marketFeeAvailable.toString(),
     marketFeeClaimed: account.marketFeeClaimed.toString(),
     winningDirection:
-      WinningDirection[Object.keys(account.winningDirection)[0].toUpperCase()]
+      WinningDirection[Object.keys(account.winningDirection)[0].toUpperCase()],
+    marketLiquidityAtStart:
+      account.marketLiquidityAtStart.toString() > 0
+        ? account.marketLiquidityAtStart.toString()
+        : '500000000'
   }
 }
 
@@ -130,6 +134,7 @@ export const accountToMarketV1 = (account: any, address: PublicKey): Market => {
         Object.keys(
           account.previousResolvedQuestion.winningDirection
         )[0].toUpperCase()
-      ]
+      ],
+    marketLiquidityAtStart: '0'
   }
 }
