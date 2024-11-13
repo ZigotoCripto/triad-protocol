@@ -101,6 +101,10 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
         payout = additional_payout + order.total_amount;
     }
 
+    if payout > order.total_shares {
+        payout = order.total_shares;
+    }
+
     if is_winner {
         msg!("Market Shares {:?}", market_shares);
         msg!("Markets Liquidity {:?}", market_liquidity);
