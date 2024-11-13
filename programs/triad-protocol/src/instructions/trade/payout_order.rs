@@ -105,16 +105,6 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
         payout = order.total_shares;
     }
 
-    if is_winner {
-        msg!("Market Shares {:?}", market_shares);
-        msg!("Market Liquidity {:?}", market_liquidity);
-        msg!("Order Amount {:?}", order.total_amount);
-        msg!("Order Shares {:?}", order.total_shares);
-        msg!("Payout {:?}", payout);
-
-        return Ok(());
-    }
-
     if payout > 0 && is_winner {
         let signer: &[&[&[u8]]] = &[&[b"market", &market.market_id.to_le_bytes(), &[market.bump]]];
 
