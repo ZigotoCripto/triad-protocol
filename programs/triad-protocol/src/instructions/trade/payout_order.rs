@@ -107,10 +107,9 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
 
     if is_winner {
         msg!("Market Shares {:?}", market_shares);
-        msg!("Markets Liquidity {:?}", market_liquidity);
-        msg!("Initial Liquidity {:?}", market_initial_liquidity);
-        msg!("Order Shares {:?}", order.total_shares);
+        msg!("Market Liquidity {:?}", market_liquidity);
         msg!("Order Amount {:?}", order.total_amount);
+        msg!("Order Shares {:?}", order.total_shares);
         msg!("Payout {:?}", payout);
 
         return Ok(());
@@ -136,10 +135,10 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
 
         user_trade.total_withdraws = user_trade.total_withdraws.checked_add(payout).unwrap();
 
-        msg!("Amount {:?}", order.total_amount);
         msg!("Market Shares {:?}", market_shares);
-        msg!("Total Shares {:?}", order.total_shares);
-        msg!("Market Opposit Liquidity {:?}", market_opposit_liquidity);
+        msg!("Market Liquidity {:?}", market_liquidity);
+        msg!("Order Amount {:?}", order.total_amount);
+        msg!("Order Shares {:?}", order.total_shares);
         msg!("Payout {:?}", payout);
     }
 
