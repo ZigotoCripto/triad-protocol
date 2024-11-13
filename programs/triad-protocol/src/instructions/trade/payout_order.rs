@@ -96,7 +96,7 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
 
     if is_winner && !is_one_to_one {
         let shares_ratio = (order.total_shares as f64) / (market_shares as f64);
-        let additional_payout = (shares_ratio * (market_opposit_liquidity as f64)).round() as u64;
+        let additional_payout = (shares_ratio * (market_liquidity as f64)).round() as u64;
 
         payout = additional_payout + order.total_amount;
     }
