@@ -25,3 +25,4 @@ bytemuck = { version = "1.4.0" }
 spl-token-metadata-interface = "0.3.3"
 spl-type-length-value = "0.4.3"
 serde = { version = "1.0", features = ["derive"] }
+mpl-core = { version = "0.8.0", features = ["anchor"] }
