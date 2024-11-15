@@ -1205,6 +1205,35 @@ export type TriadProtocol = {
       ]
     },
     {
+      name: 'resolveMarketV1'
+      discriminator: [67, 202, 40, 49, 111, 136, 234, 183]
+      accounts: [
+        {
+          name: 'signer'
+          writable: true
+          signer: true
+        },
+        {
+          name: 'market'
+          writable: true
+        },
+        {
+          name: 'systemProgram'
+          address: '11111111111111111111111111111111'
+        }
+      ]
+      args: [
+        {
+          name: 'winningDirection'
+          type: {
+            defined: {
+              name: 'winningDirection'
+            }
+          }
+        }
+      ]
+    },
+    {
       name: 'settleOrder'
       discriminator: [80, 74, 204, 34, 12, 183, 66, 66]
       accounts: [

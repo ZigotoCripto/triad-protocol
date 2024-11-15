@@ -37,6 +37,13 @@ pub mod triad_protocol {
         instructions::resolve_market(ctx, winning_direction)
     }
 
+    pub fn resolve_market_v1(
+        ctx: Context<ResolveMarketV1>,
+        winning_direction: WinningDirection
+    ) -> Result<()> {
+        instructions::resolve_market_v1(ctx, winning_direction)
+    }
+
     pub fn add_liquidity(ctx: Context<AddLiquidity>, args: AddLiquidityArgs) -> Result<()> {
         instructions::add_liquidity(ctx, args)
     }
