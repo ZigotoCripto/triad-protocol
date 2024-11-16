@@ -101,4 +101,11 @@ pub mod triad_protocol {
     pub fn update_stake_boost(ctx: Context<UpdateStakeBoost>) -> Result<()> {
         instructions::update_stake_boost(ctx)
     }
+
+    pub fn create_collection(
+        ctx: Context<CreateCollection>,
+        args: CreateCollectionArgs
+    ) -> Result<()> {
+        instructions::create_collection(ctx, args)
+    }
 }

@@ -397,6 +397,59 @@
       "args": []
     },
     {
+      "name": "create_collection",
+      "discriminator": [156, 251, 92, 54, 233, 2, 16, 82],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "collection",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [99, 111, 108, 108, 101, 99, 116, 105, 111, 110]
+              },
+              {
+                "kind": "arg",
+                "path": "args.symbol"
+              }
+            ]
+          }
+        },
+        {
+          "name": "metaplex_program",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "CreateCollectionArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "create_user",
       "discriminator": [108, 227, 130, 130, 252, 109, 75, 218],
       "accounts": [
@@ -1357,6 +1410,10 @@
   ],
   "accounts": [
     {
+      "name": "Collection",
+      "discriminator": [48, 160, 232, 205, 191, 207, 26, 141]
+    },
+    {
       "name": "Market",
       "discriminator": [219, 190, 213, 55, 0, 227, 198, 154]
     },
@@ -1542,6 +1599,60 @@
           {
             "name": "collections",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Collection",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "minted",
+            "type": "u64"
+          },
+          {
+            "name": "supply",
+            "type": "u64"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": ["u8", 64]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateCollectionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "supply",
+            "type": "u64"
           }
         ]
       }

@@ -635,6 +635,59 @@ export type TriadProtocol = {
       args: []
     },
     {
+      name: 'createCollection'
+      discriminator: [156, 251, 92, 54, 233, 2, 16, 82]
+      accounts: [
+        {
+          name: 'signer'
+          writable: true
+          signer: true
+        },
+        {
+          name: 'collection'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'const'
+                value: [99, 111, 108, 108, 101, 99, 116, 105, 111, 110]
+              },
+              {
+                kind: 'arg'
+                path: 'args.symbol'
+              }
+            ]
+          }
+        },
+        {
+          name: 'metaplexProgram'
+          address: 'CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d'
+        },
+        {
+          name: 'tokenProgram'
+          address: 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA'
+        },
+        {
+          name: 'associatedTokenProgram'
+          address: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
+        },
+        {
+          name: 'systemProgram'
+          address: '11111111111111111111111111111111'
+        }
+      ]
+      args: [
+        {
+          name: 'args'
+          type: {
+            defined: {
+              name: 'createCollectionArgs'
+            }
+          }
+        }
+      ]
+    },
+    {
       name: 'createUser'
       discriminator: [108, 227, 130, 130, 252, 109, 75, 218]
       accounts: [
@@ -1972,6 +2025,10 @@ export type TriadProtocol = {
   ]
   accounts: [
     {
+      name: 'collection'
+      discriminator: [48, 160, 232, 205, 191, 207, 26, 141]
+    },
+    {
       name: 'market'
       discriminator: [219, 190, 213, 55, 0, 227, 198, 154]
     },
@@ -2157,6 +2214,60 @@ export type TriadProtocol = {
           {
             name: 'collections'
             type: 'u8'
+          }
+        ]
+      }
+    },
+    {
+      name: 'collection'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'authority'
+            type: 'pubkey'
+          },
+          {
+            name: 'bump'
+            type: 'u8'
+          },
+          {
+            name: 'symbol'
+            type: 'string'
+          },
+          {
+            name: 'minted'
+            type: 'u64'
+          },
+          {
+            name: 'supply'
+            type: 'u64'
+          },
+          {
+            name: 'padding'
+            type: {
+              array: ['u8', 64]
+            }
+          }
+        ]
+      }
+    },
+    {
+      name: 'createCollectionArgs'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'name'
+            type: 'string'
+          },
+          {
+            name: 'symbol'
+            type: 'string'
+          },
+          {
+            name: 'supply'
+            type: 'u64'
           }
         ]
       }

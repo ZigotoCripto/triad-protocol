@@ -59,7 +59,12 @@ pub fn payout_order(ctx: Context<PayoutOrder>, order_id: u64) -> Result<()> {
 
     let order_index = user_trade.orders
         .iter()
-        .position(|order| order.order_id == order_id && order.status == OrderStatus::Open)
+        .position(
+            |order|
+                order.order_id == order_id &&
+                order.status == OrderStatus::Open &&
+                order.market_id == market.market_id
+        )
         .ok_or(TriadProtocolError::OrderNotFound)?;
 
     let order = user_trade.orders[order_index];
