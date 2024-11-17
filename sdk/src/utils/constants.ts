@@ -15,3 +15,6 @@ export const TRIAD_ADMIN = new PublicKey(
 export const SOL_MINT = new PublicKey(
   'So11111111111111111111111111111111111111112'
 )
+export const TICKET_CORE_COLLECTION = new PublicKey(
+  'BaqopH1VXYUCT6VsojbTibVcd3k5jpGGT6296HFb6fVa'
+)

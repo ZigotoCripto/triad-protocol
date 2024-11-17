@@ -397,6 +397,64 @@
       "args": []
     },
     {
+      "name": "create_collection",
+      "discriminator": [156, 251, 92, 54, 233, 2, 16, 82],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "core_collection",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "collection",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [99, 111, 108, 108, 101, 99, 116, 105, 111, 110]
+              },
+              {
+                "kind": "arg",
+                "path": "args.symbol"
+              }
+            ]
+          }
+        },
+        {
+          "name": "metaplex_program",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "CreateCollectionArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "create_user",
       "discriminator": [108, 227, 130, 130, 252, 109, 75, 218],
       "accounts": [
@@ -553,6 +611,129 @@
           "type": {
             "defined": {
               "name": "InitializeMarketArgs"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "mint_ticket",
+      "discriminator": [159, 167, 223, 60, 138, 6, 23, 29],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "nft",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [110, 102, 116]
+              },
+              {
+                "kind": "arg",
+                "path": "args.number"
+              }
+            ]
+          }
+        },
+        {
+          "name": "verifier",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "asset",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "nft_mint",
+          "writable": true
+        },
+        {
+          "name": "collection",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [99, 111, 108, 108, 101, 99, 116, 105, 111, 110]
+              },
+              {
+                "kind": "arg",
+                "path": "args.collection_symbol"
+              }
+            ]
+          }
+        },
+        {
+          "name": "core_collection",
+          "writable": true
+        },
+        {
+          "name": "trd_mint",
+          "writable": true
+        },
+        {
+          "name": "user_trd_ata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "signer"
+              },
+              {
+                "kind": "account",
+                "path": "token_program"
+              },
+              {
+                "kind": "account",
+                "path": "trd_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
+                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
+                219, 233, 248, 89
+              ]
+            }
+          }
+        },
+        {
+          "name": "user_nft_ata",
+          "writable": true
+        },
+        {
+          "name": "metaplex_program",
+          "address": "CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "args",
+          "type": {
+            "defined": {
+              "name": "MintTicketArgs"
             }
           }
         }
@@ -795,6 +976,35 @@
     {
       "name": "resolve_market",
       "discriminator": [155, 23, 80, 173, 46, 74, 23, 239],
+      "accounts": [
+        {
+          "name": "signer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "winning_direction",
+          "type": {
+            "defined": {
+              "name": "WinningDirection"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "resolve_market_v1",
+      "discriminator": [67, 202, 40, 49, 111, 136, 234, 183],
       "accounts": [
         {
           "name": "signer",
@@ -1328,12 +1538,24 @@
   ],
   "accounts": [
     {
+      "name": "BaseCollectionV1",
+      "discriminator": [0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
+      "name": "Collection",
+      "discriminator": [48, 160, 232, 205, 191, 207, 26, 141]
+    },
+    {
       "name": "Market",
       "discriminator": [219, 190, 213, 55, 0, 227, 198, 154]
     },
     {
       "name": "MarketV2",
       "discriminator": [27, 60, 50, 75, 191, 193, 86, 227]
+    },
+    {
+      "name": "Nft",
+      "discriminator": [88, 10, 146, 176, 101, 11, 40, 217]
     },
     {
       "name": "StakeV2",
@@ -1478,6 +1700,11 @@
       "code": 6019,
       "name": "ConcurrentTransaction",
       "msg": "Concurrent transaction"
+    },
+    {
+      "code": 6020,
+      "name": "CollectionFull",
+      "msg": "Collection is full"
     }
   ],
   "types": [
@@ -1502,6 +1729,42 @@
       }
     },
     {
+      "name": "BaseCollectionV1",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "key",
+            "type": {
+              "defined": {
+                "name": "Key"
+              }
+            }
+          },
+          {
+            "name": "update_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "uri",
+            "type": "string"
+          },
+          {
+            "name": "num_minted",
+            "type": "u32"
+          },
+          {
+            "name": "current_size",
+            "type": "u32"
+          }
+        ]
+      }
+    },
+    {
       "name": "ClaimStakeRewardsArgs",
       "type": {
         "kind": "struct",
@@ -1513,6 +1776,60 @@
           {
             "name": "collections",
             "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Collection",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "minted",
+            "type": "u64"
+          },
+          {
+            "name": "supply",
+            "type": "u64"
+          },
+          {
+            "name": "padding",
+            "type": {
+              "array": ["u8", 64]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateCollectionArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "symbol",
+            "type": "string"
+          },
+          {
+            "name": "supply",
+            "type": "u64"
           }
         ]
       }
@@ -1555,6 +1872,32 @@
           {
             "name": "end_time",
             "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Key",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Uninitialized"
+          },
+          {
+            "name": "AssetV1"
+          },
+          {
+            "name": "HashedAssetV1"
+          },
+          {
+            "name": "PluginHeaderV1"
+          },
+          {
+            "name": "PluginRegistryV1"
+          },
+          {
+            "name": "CollectionV1"
           }
         ]
       }
@@ -1908,6 +2251,45 @@
       }
     },
     {
+      "name": "MintTicketArgs",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "collection_symbol",
+            "type": "string"
+          },
+          {
+            "name": "discount",
+            "type": "u64"
+          },
+          {
+            "name": "is_boosted",
+            "type": "bool"
+          },
+          {
+            "name": "number",
+            "type": "u64"
+          },
+          {
+            "name": "rarity",
+            "type": {
+              "defined": {
+                "name": "Rarity"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Nft",
+      "type": {
+        "kind": "struct",
+        "fields": []
+      }
+    },
+    {
       "name": "OpenOrderArgs",
       "type": {
         "kind": "struct",
@@ -2187,6 +2569,32 @@
           {
             "name": "timestamp",
             "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Rarity",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Common"
+          },
+          {
+            "name": "Uncommon"
+          },
+          {
+            "name": "Rare"
+          },
+          {
+            "name": "Epic"
+          },
+          {
+            "name": "Legendary"
+          },
+          {
+            "name": "Mythic"
           }
         ]
       }

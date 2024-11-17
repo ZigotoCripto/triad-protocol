@@ -52,26 +52,23 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
     let market = &mut ctx.accounts.market;
     let user_trade = &mut ctx.accounts.user_trade;
 
-    require!(
-        market.previous_resolved_question.question_id == market.current_question_id,
-        TriadProtocolError::MarketStillActive
-    );
-
     let winning_direction = market.previous_resolved_question.winning_direction;
 
     require!(winning_direction != WinningDirection::None, TriadProtocolError::MarketNotResolved);
 
     let order_index = user_trade.orders
         .iter()
-        .position(|order| order.order_id == order_id && order.status == OrderStatus::Open)
+        .position(
+            |order|
+                order.order_id == order_id &&
+                order.status == OrderStatus::Open &&
+                order.market_id == market.market_id
+        )
         .ok_or(TriadProtocolError::OrderNotFound)?;
 
     let order = user_trade.orders[order_index];
 
-    require!(
-        market.current_question_id == order.question_id,
-        TriadProtocolError::MarketStillActive
-    );
+    require!(market.current_question_id == order.question_id, TriadProtocolError::OrderNotFound);
 
     let (shares, is_winner) = match (order.direction, winning_direction) {
         | (OrderDirection::Hype, WinningDirection::Hype)
@@ -122,12 +119,6 @@ pub fn settle_order(ctx: Context<SettleOrder>, order_id: u64) -> Result<()> {
         )?;
 
         user_trade.total_withdraws = user_trade.total_withdraws.checked_add(payout).unwrap();
-
-        msg!("Amount {:?}", order.total_amount);
-        msg!("Market Shares {:?}", market_shares);
-        msg!("Market Opposit Liquidity {:?}", market_opposit_liquidity);
-        msg!("Med Price {:?}", med_price);
-        msg!("Payout {:?}", payout);
     }
 
     let pnl = (payout as i64) - (order.total_amount as i64);

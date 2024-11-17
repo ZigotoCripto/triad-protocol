@@ -11,6 +11,20 @@ export type CreateUserArgs = {
   referral?: PublicKey
 }
 
+export type MintTicketArgs = {
+  discount: number
+  isBoosted: boolean
+  rarity:
+    | { common: {} }
+    | { uncommon: {} }
+    | { rare: {} }
+    | { legendary: {} }
+    | { epic: {} }
+    | { mythic: {} }
+  verifier: string
+  nftMint: PublicKey
+}
+
 export type User = {
   ts: number
   authority: string

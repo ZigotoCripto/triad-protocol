@@ -37,6 +37,13 @@ pub mod triad_protocol {
         instructions::resolve_market(ctx, winning_direction)
     }
 
+    pub fn resolve_market_v1(
+        ctx: Context<ResolveMarketV1>,
+        winning_direction: WinningDirection
+    ) -> Result<()> {
+        instructions::resolve_market_v1(ctx, winning_direction)
+    }
+
     pub fn add_liquidity(ctx: Context<AddLiquidity>, args: AddLiquidityArgs) -> Result<()> {
         instructions::add_liquidity(ctx, args)
     }
@@ -93,5 +100,16 @@ pub mod triad_protocol {
 
     pub fn update_stake_boost(ctx: Context<UpdateStakeBoost>) -> Result<()> {
         instructions::update_stake_boost(ctx)
+    }
+
+    pub fn create_collection(
+        ctx: Context<CreateCollection>,
+        args: CreateCollectionArgs
+    ) -> Result<()> {
+        instructions::create_collection(ctx, args)
+    }
+
+    pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()> {
+        instructions::mint_ticket(ctx, args)
     }
 }
