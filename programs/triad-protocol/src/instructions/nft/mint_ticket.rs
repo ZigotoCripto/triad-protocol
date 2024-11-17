@@ -118,7 +118,7 @@ pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()>
     )?;
 
     // Burn the TRD
-    let price = match args.rarity {
+    let mut price = match args.rarity {
         Rarity::Common => 150_000_000,
         Rarity::Uncommon => 100_000_000,
         Rarity::Rare => 50_000_000,
@@ -126,7 +126,7 @@ pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()>
     };
 
     let discount = price.checked_mul(args.discount.checked_div(100).unwrap()).unwrap();
-    let price_with_discount = price.checked_sub(discount).unwrap();
+    price = price.checked_sub(discount).unwrap();
 
     burn(
         CpiContext::new(ctx.accounts.token_program.to_account_info(), Burn {
@@ -134,7 +134,7 @@ pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()>
             from: ctx.accounts.user_trd_ata.to_account_info(),
             authority: ctx.accounts.signer.to_account_info(),
         }),
-        price_with_discount
+        price
     )?;
 
     let number = args.number;
@@ -187,21 +187,13 @@ pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()>
                         attribute_list: vec![
                             mpl_core::types::Attribute {
                                 key: "Boost".to_string(),
-                                value: args.is_boosted.to_string(),
+                                value: rarity_boost_str.to_string(),
                             },
                             mpl_core::types::Attribute {
                                 key: "Rarity".to_string(),
                                 value: rarity,
                             }
                         ],
-                    }),
-                },
-                PluginAuthorityPair {
-                    authority: None,
-                    plugin: mpl_core::types::Plugin::MasterEdition(mpl_core::types::MasterEdition {
-                        max_supply: Some(0),
-                        name: Some(nft_name.clone()),
-                        uri: Some("".to_string()),
                     }),
                 }
             ]
