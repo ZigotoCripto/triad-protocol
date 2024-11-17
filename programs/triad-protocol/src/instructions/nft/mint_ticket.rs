@@ -125,7 +125,7 @@ pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()>
         _ => 0u64,
     };
 
-    let discount = price.checked_mul(args.discount.checked_div(100).unwrap()).unwrap();
+    let discount = price.checked_mul(args.discount).unwrap().checked_div(100).unwrap();
     price = price.checked_sub(discount).unwrap();
 
     burn(
