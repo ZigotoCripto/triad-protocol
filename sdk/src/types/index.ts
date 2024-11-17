@@ -12,11 +12,15 @@ export type CreateUserArgs = {
 }
 
 export type MintTicketArgs = {
-  collectionSymbol: string
-  number: number
   discount: number
   isBoosted: boolean
-  rarity: { common: {} } | { uncommon: {} } | { rare: {} }
+  rarity:
+    | { common: {} }
+    | { uncommon: {} }
+    | { rare: {} }
+    | { legendary: {} }
+    | { epic: {} }
+    | { mythic: {} }
   verifier: string
   nftMint: PublicKey
 }

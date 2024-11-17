@@ -1,5 +1,4 @@
 use anchor_lang::prelude::*;
-use std::fmt;
 
 #[account]
 pub struct Collection {
@@ -35,19 +34,6 @@ pub enum Rarity {
     Epic,
     Legendary,
     Mythic,
-}
-
-impl fmt::Display for Rarity {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match self {
-            Rarity::Common => write!(f, "Common"),
-            Rarity::Uncommon => write!(f, "Uncommon"),
-            Rarity::Rare => write!(f, "Rare"),
-            Rarity::Epic => write!(f, "Epic"),
-            Rarity::Legendary => write!(f, "Legendary"),
-            Rarity::Mythic => write!(f, "Mythic"),
-        }
-    }
 }
 
 #[account]

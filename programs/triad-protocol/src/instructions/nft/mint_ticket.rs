@@ -98,6 +98,8 @@ pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()>
 
     require!(collection.supply > collection.minted, TriadProtocolError::CollectionFull);
 
+    drop(buffer);
+
     // Burn the NFT
     burn(
         CpiContext::new(ctx.accounts.token_program.to_account_info(), Burn {
@@ -138,12 +140,20 @@ pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()>
     let number = args.number;
     let nft_name = format!("Poseidon's Ticket #{}", number);
 
-    let rarity_str = args.rarity.to_string();
-    let rarity_boost_str = if args.is_boosted { "boosted" } else { "normal" };
+    let rarity: String = match args.rarity {
+        Rarity::Common => "Common".to_string(),
+        Rarity::Uncommon => "Uncommon".to_string(),
+        Rarity::Rare => "Rare".to_string(),
+        Rarity::Epic => "Epic".to_string(),
+        Rarity::Legendary => "Legendary".to_string(),
+        Rarity::Mythic => "Mythic".to_string(),
+    };
+
+    let rarity_boost_str = if args.is_boosted { "true" } else { "false" };
 
     let nft_uri = format!(
         "https://shdw-drive.genesysgo.net/9ZgbDbP9wL1oPegdNj66TH6tnazEMFcMnREJdKsKEMwx/{}_{}.json",
-        rarity_str,
+        rarity,
         rarity_boost_str
     );
 
@@ -181,7 +191,7 @@ pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()>
                             },
                             mpl_core::types::Attribute {
                                 key: "Rarity".to_string(),
-                                value: args.rarity.to_string(),
+                                value: rarity,
                             }
                         ],
                     }),
@@ -191,7 +201,7 @@ pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()>
                     plugin: mpl_core::types::Plugin::MasterEdition(mpl_core::types::MasterEdition {
                         max_supply: Some(0),
                         name: Some(nft_name.clone()),
-                        uri: Some(nft_uri.clone()),
+                        uri: Some("".to_string()),
                     }),
                 }
             ]

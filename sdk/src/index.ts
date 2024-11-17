@@ -6,6 +6,7 @@ import Trade from './trade'
 import { formatUser } from './utils/helpers'
 import { getAssociatedTokenAddress } from '@solana/spl-token'
 import {
+  getTokenATA,
   getTokenVaultAddressSync,
   getUserPDA,
   getUserPositionPDA,
@@ -223,27 +224,19 @@ export default class TriadProtocolClient {
   }
 
   async mintTicket(
-    {
-      collectionSymbol,
-      number,
-      discount,
-      isBoosted,
-      rarity,
-      verifier,
-      nftMint
-    }: MintTicketArgs,
+    { discount, isBoosted, rarity, verifier, nftMint }: MintTicketArgs,
     options?: RpcOptions
   ) {
     const asset = Keypair.generate()
+    const userNftAta = getTokenATA(this.provider.wallet.publicKey, nftMint)
 
-    const userNftAta = await getAssociatedTokenAddress(
-      nftMint,
-      this.provider.wallet.publicKey
-    )
+    const collectionSymbol = 'PTCKT'
+
+    const [collection] = await this.program.account.collection.all()
 
     const ix = await this.program.methods
       .mintTicket({
-        number: new BN(number),
+        number: new BN(collection.account.minted),
         collectionSymbol,
         discount: new BN(discount),
         isBoosted,
