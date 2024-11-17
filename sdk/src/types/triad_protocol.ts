@@ -644,6 +644,11 @@ export type TriadProtocol = {
           signer: true
         },
         {
+          name: 'coreCollection'
+          writable: true
+          signer: true
+        },
+        {
           name: 'collection'
           writable: true
           pda: {
@@ -873,6 +878,158 @@ export type TriadProtocol = {
           type: {
             defined: {
               name: 'initializeMarketArgs'
+            }
+          }
+        }
+      ]
+    },
+    {
+      name: 'mintTicket'
+      discriminator: [159, 167, 223, 60, 138, 6, 23, 29]
+      accounts: [
+        {
+          name: 'signer'
+          writable: true
+          signer: true
+        },
+        {
+          name: 'nft'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'const'
+                value: [110, 102, 116]
+              },
+              {
+                kind: 'arg'
+                path: 'args.number'
+              }
+            ]
+          }
+        },
+        {
+          name: 'verifier'
+          writable: true
+          signer: true
+        },
+        {
+          name: 'asset'
+          writable: true
+          signer: true
+        },
+        {
+          name: 'nftMint'
+          writable: true
+        },
+        {
+          name: 'collection'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'const'
+                value: [99, 111, 108, 108, 101, 99, 116, 105, 111, 110]
+              },
+              {
+                kind: 'arg'
+                path: 'args.collection_symbol'
+              }
+            ]
+          }
+        },
+        {
+          name: 'coreCollection'
+          writable: true
+        },
+        {
+          name: 'trdMint'
+          writable: true
+        },
+        {
+          name: 'userTrdAta'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'account'
+                path: 'signer'
+              },
+              {
+                kind: 'account'
+                path: 'tokenProgram'
+              },
+              {
+                kind: 'account'
+                path: 'trdMint'
+              }
+            ]
+            program: {
+              kind: 'const'
+              value: [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          name: 'userNftAta'
+          writable: true
+        },
+        {
+          name: 'metaplexProgram'
+          address: 'CoREENxT6tW1HoK8ypY1SxRMZTcVPm7R94rH4PZNhX7d'
+        },
+        {
+          name: 'tokenProgram'
+          address: 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
+        },
+        {
+          name: 'associatedTokenProgram'
+          address: 'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
+        },
+        {
+          name: 'systemProgram'
+          address: '11111111111111111111111111111111'
+        }
+      ]
+      args: [
+        {
+          name: 'args'
+          type: {
+            defined: {
+              name: 'mintTicketArgs'
             }
           }
         }
@@ -2025,6 +2182,10 @@ export type TriadProtocol = {
   ]
   accounts: [
     {
+      name: 'baseCollectionV1'
+      discriminator: [0, 0, 0, 0, 0, 0, 0, 0]
+    },
+    {
       name: 'collection'
       discriminator: [48, 160, 232, 205, 191, 207, 26, 141]
     },
@@ -2035,6 +2196,10 @@ export type TriadProtocol = {
     {
       name: 'marketV2'
       discriminator: [27, 60, 50, 75, 191, 193, 86, 227]
+    },
+    {
+      name: 'nft'
+      discriminator: [88, 10, 146, 176, 101, 11, 40, 217]
     },
     {
       name: 'stakeV2'
@@ -2179,6 +2344,11 @@ export type TriadProtocol = {
       code: 6019
       name: 'concurrentTransaction'
       msg: 'Concurrent transaction'
+    },
+    {
+      code: 6020
+      name: 'collectionFull'
+      msg: 'Collection is full'
     }
   ]
   types: [
@@ -2198,6 +2368,42 @@ export type TriadProtocol = {
                 name: 'orderDirection'
               }
             }
+          }
+        ]
+      }
+    },
+    {
+      name: 'baseCollectionV1'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'key'
+            type: {
+              defined: {
+                name: 'key'
+              }
+            }
+          },
+          {
+            name: 'updateAuthority'
+            type: 'pubkey'
+          },
+          {
+            name: 'name'
+            type: 'string'
+          },
+          {
+            name: 'uri'
+            type: 'string'
+          },
+          {
+            name: 'numMinted'
+            type: 'u32'
+          },
+          {
+            name: 'currentSize'
+            type: 'u32'
           }
         ]
       }
@@ -2310,6 +2516,32 @@ export type TriadProtocol = {
           {
             name: 'endTime'
             type: 'i64'
+          }
+        ]
+      }
+    },
+    {
+      name: 'key'
+      type: {
+        kind: 'enum'
+        variants: [
+          {
+            name: 'uninitialized'
+          },
+          {
+            name: 'assetV1'
+          },
+          {
+            name: 'hashedAssetV1'
+          },
+          {
+            name: 'pluginHeaderV1'
+          },
+          {
+            name: 'pluginRegistryV1'
+          },
+          {
+            name: 'collectionV1'
           }
         ]
       }
@@ -2659,6 +2891,45 @@ export type TriadProtocol = {
       }
     },
     {
+      name: 'mintTicketArgs'
+      type: {
+        kind: 'struct'
+        fields: [
+          {
+            name: 'collectionSymbol'
+            type: 'string'
+          },
+          {
+            name: 'discount'
+            type: 'u64'
+          },
+          {
+            name: 'isBoosted'
+            type: 'bool'
+          },
+          {
+            name: 'number'
+            type: 'u64'
+          },
+          {
+            name: 'rarity'
+            type: {
+              defined: {
+                name: 'rarity'
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      name: 'nft'
+      type: {
+        kind: 'struct'
+        fields: []
+      }
+    },
+    {
       name: 'openOrderArgs'
       type: {
         kind: 'struct'
@@ -2938,6 +3209,32 @@ export type TriadProtocol = {
           {
             name: 'timestamp'
             type: 'i64'
+          }
+        ]
+      }
+    },
+    {
+      name: 'rarity'
+      type: {
+        kind: 'enum'
+        variants: [
+          {
+            name: 'common'
+          },
+          {
+            name: 'uncommon'
+          },
+          {
+            name: 'rare'
+          },
+          {
+            name: 'epic'
+          },
+          {
+            name: 'legendary'
+          },
+          {
+            name: 'mythic'
           }
         ]
       }

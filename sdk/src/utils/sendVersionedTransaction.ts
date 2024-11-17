@@ -14,7 +14,8 @@ const sendVersionedTransaction = async (
   ixs: TransactionInstruction[],
   options?: RpcOptions,
   payer?: Keypair,
-  addressLookupTableAccounts?: AddressLookupTableAccount[]
+  addressLookupTableAccounts?: AddressLookupTableAccount[],
+  verifier?: Keypair
 ): Promise<string> => {
   if (options?.microLamports) {
     ixs.push(
@@ -34,11 +35,19 @@ const sendVersionedTransaction = async (
     }).compileToV0Message(addressLookupTableAccounts)
   )
 
+  let signers = []
+
   if (payer) {
     tx.sign([payer])
+    signers.push(payer)
   }
 
-  return provider.sendAndConfirm(tx, payer ? [payer] : [], {
+  if (verifier) {
+    tx.sign([verifier])
+    signers.push(verifier)
+  }
+
+  return provider.sendAndConfirm(tx, signers, {
     skipPreflight: options?.skipPreflight,
     commitment: 'confirmed'
   })

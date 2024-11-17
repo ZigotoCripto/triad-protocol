@@ -21,7 +21,7 @@ export const jupSwap = async ({
 }) => {
   try {
     const quoteResponse = await axios.get(
-      `https://quote-api.jup.ag/v6/quote?inputMint=${inToken}&outputMint=${outToken}&amount=${amount}&slippageBps=10`
+      `https://quote-api.jup.ag/v6/quote?inputMint=${inToken}&outputMint=${outToken}&amount=${amount}&slippageBps=100`
     )
 
     const { data: quoteData } = quoteResponse

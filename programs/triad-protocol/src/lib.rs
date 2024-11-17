@@ -108,4 +108,8 @@ pub mod triad_protocol {
     ) -> Result<()> {
         instructions::create_collection(ctx, args)
     }
+
+    pub fn mint_ticket(ctx: Context<MintTicket>, args: MintTicketArgs) -> Result<()> {
+        instructions::mint_ticket(ctx, args)
+    }
 }

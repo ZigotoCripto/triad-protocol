@@ -1,4 +1,3 @@
-use crate::{ state::Collection, CreateCollectionArgs };
 use anchor_lang::prelude::*;
 use anchor_spl::associated_token::AssociatedToken;
 use anchor_spl::token::Token;
@@ -8,11 +7,16 @@ use mpl_core::{
     types::{ PluginAuthorityPair, Creator },
 };
 
+use crate::{ state::Collection, CreateCollectionArgs };
+
 #[derive(Accounts)]
 #[instruction(args: CreateCollectionArgs)]
 pub struct CreateCollection<'info> {
     #[account(mut)]
     pub signer: Signer<'info>,
+
+    #[account(mut)]
+    pub core_collection: Signer<'info>,
 
     #[account(
         init,
@@ -54,7 +58,7 @@ pub fn create_collection(ctx: Context<CreateCollection>, args: CreateCollectionA
     );
 
     CreateCollectionV2CpiBuilder::new(&ctx.accounts.metaplex_program.to_account_info())
-        .collection(&collection.to_account_info())
+        .collection(&ctx.accounts.core_collection.to_account_info())
         .update_authority(Some(&collection.to_account_info()))
         .payer(&ctx.accounts.signer.to_account_info())
         .system_program(&ctx.accounts.system_program.to_account_info())

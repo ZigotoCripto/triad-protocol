@@ -1,5 +1,5 @@
-import { AnchorProvider, Program, Wallet } from '@coral-xyz/anchor'
-import { Connection, PublicKey } from '@solana/web3.js'
+import { AnchorProvider, BN, Program, Wallet } from '@coral-xyz/anchor'
+import { Connection, Keypair, PublicKey } from '@solana/web3.js'
 import { TriadProtocol } from './types/triad_protocol'
 import IDL from './types/idl_triad_protocol.json'
 import Trade from './trade'
@@ -12,9 +12,12 @@ import {
   getVaultAddressSync
 } from './utils/pda'
 import Stake from './stake'
-import { CreateUserArgs, RpcOptions } from './types'
+import { CreateUserArgs, MintTicketArgs, RpcOptions } from './types'
 import sendTransactionWithOptions from './utils/sendTransactionWithOptions'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
+import sendVersionedTransaction from './utils/sendVersionedTransaction'
+import { TICKET_CORE_COLLECTION, TRD_MINT, VERIFIER } from './utils/constants'
+import { convertSecretKeyToKeypair } from './utils/convertSecretKeyToKeypair'
 
 export default class TriadProtocolClient {
   program: Program<TriadProtocol>
@@ -191,6 +194,79 @@ export default class TriadProtocolClient {
         vaultTokenAccount: VaultTokenAccountPDA
       }),
       options
+    )
+  }
+
+  async createCollection(
+    args: {
+      collectionName: string
+      collectionSymbol: string
+      supply: number
+    },
+    options?: RpcOptions
+  ) {
+    const keyPair = Keypair.generate()
+
+    const ix = await this.program.methods
+      .createCollection({
+        supply: new BN(args.supply),
+        name: args.collectionName,
+        symbol: args.collectionSymbol
+      })
+      .accounts({
+        signer: this.provider.wallet.publicKey,
+        coreCollection: keyPair.publicKey
+      })
+      .instruction()
+
+    return sendVersionedTransaction(this.provider, [ix], options, keyPair)
+  }
+
+  async mintTicket(
+    {
+      collectionSymbol,
+      number,
+      discount,
+      isBoosted,
+      rarity,
+      verifier,
+      nftMint
+    }: MintTicketArgs,
+    options?: RpcOptions
+  ) {
+    const asset = Keypair.generate()
+
+    const userNftAta = await getAssociatedTokenAddress(
+      nftMint,
+      this.provider.wallet.publicKey
+    )
+
+    const ix = await this.program.methods
+      .mintTicket({
+        number: new BN(number),
+        collectionSymbol,
+        discount: new BN(discount),
+        isBoosted,
+        rarity
+      })
+      .accounts({
+        signer: this.provider.wallet.publicKey,
+        asset: asset.publicKey,
+        nftMint,
+        userNftAta,
+        trdMint: TRD_MINT,
+        verifier: VERIFIER,
+        coreCollection: TICKET_CORE_COLLECTION
+      })
+      .instruction()
+
+    return sendVersionedTransaction(
+      this.provider,
+      [ix],
+      options,
+      asset,
+      [],
+      convertSecretKeyToKeypair(verifier)
     )
   }
 }

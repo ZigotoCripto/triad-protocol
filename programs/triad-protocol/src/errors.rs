@@ -61,4 +61,7 @@ pub enum TriadProtocolError {
 
     #[msg("Concurrent transaction")]
     ConcurrentTransaction,
+
+    #[msg("Collection is full")]
+    CollectionFull,
 }
