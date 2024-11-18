@@ -133,12 +133,20 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
 
     // Calculate fee distribution
     let nft_holders_fee = (fee_amount * 100) / 10000; // 0.1%
-    let market_fee = fee_amount - nft_holders_fee; // Remaining 2% fee
+    // let Market_Maker_fee = (fee_amount * 100) / 10000; // 0.1%
 
+    
+    let market_fee = fee_amount - nft_holders_fee; // Remaining 2% fee
+    // let market_fee = fee_amount - nft_holders_fee - Market_Market_fee // remaining 1,9%
+    
     market.nft_holders_fee_available = market.nft_holders_fee_available
         .checked_add(nft_holders_fee)
         .unwrap();
     market.market_fee_available = market.market_fee_available.checked_add(market_fee).unwrap();
+
+    //market.market_maker_fee_available = market.nft_holders_fee_available
+      //  .checked_add(Market_Maker_fee)
+       // .unwrap();
 
     transfer_checked(
         CpiContext::new(ctx.accounts.token_program.to_account_info(), TransferChecked {
