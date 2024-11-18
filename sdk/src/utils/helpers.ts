@@ -4,10 +4,9 @@ import { Market, WinningDirection } from '../types/trade'
 import { PublicKey } from '@solana/web3.js'
 
 export const encodeString = (value: string, alloc = 32): number[] => {
-  const buffer = Buffer.alloc(alloc)
+  const buffer = Buffer.alloc(alloc, 32)
 
-  buffer.fill(value)
-  buffer.fill(' ', value.length)
+  buffer.write(value)
 
   return Array(...buffer)
 }

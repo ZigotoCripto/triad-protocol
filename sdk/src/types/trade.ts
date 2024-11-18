@@ -56,7 +56,6 @@ export type OpenOrderArgs = {
 
 export type InitializeMarketArgs = {
   marketId: number
-  name: string
   startTime: number
   endTime: number
   question: string

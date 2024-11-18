@@ -101,14 +101,18 @@ export default class Trade {
    *
    */
   async initializeMarket(
-    { marketId, name, startTime, endTime, question }: InitializeMarketArgs,
+    { marketId, startTime, endTime, question }: InitializeMarketArgs,
     options?: RpcOptions
   ) {
+    if (question.length > 80) {
+      throw new Error('Question must be less than 80 characters')
+    }
+
     return sendTransactionWithOptions(
       this.program.methods
         .initializeMarket({
           marketId: new BN(marketId),
-          name: name,
+          name: '',
           question: encodeString(question, 80),
           startTime: new BN(startTime),
           endTime: new BN(endTime)
