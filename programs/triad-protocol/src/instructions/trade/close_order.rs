@@ -80,12 +80,15 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
         .unwrap()
         .checked_div(1_000_000)
         .unwrap();
-
+    let initial_liquidity = 500_000_000;
+    if current_liquidity.checked_sub(current_amount).unwrap < initial_liquidity { //ammount sub higher then initial liquidity 
+        current_amount = current_liquidity.checked_sub(initital_liquidity).unwrap
+    }
     let new_directional_liquidity = current_liquidity.checked_sub(current_amount).unwrap();
     let markets_liquidity = new_directional_liquidity
         .checked_add(otherside_current_liquidity)
         .unwrap();
-
+    
     let new_price = new_directional_liquidity
         .checked_mul(1_000_000)
         .unwrap()
@@ -94,7 +97,7 @@ pub fn close_order(ctx: Context<CloseOrder>, order_id: u64) -> Result<()> {
         .clamp(1, 999_999);
 
     require!(current_liquidity > current_amount, TriadProtocolError::InsufficientLiquidity);
-
+    
     if current_amount > 0 {
         let signer: &[&[&[u8]]] = &[&[b"market", &market.market_id.to_le_bytes(), &[market.bump]]];
 
