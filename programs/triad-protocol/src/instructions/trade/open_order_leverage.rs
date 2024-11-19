@@ -53,7 +53,7 @@ pub struct OpenOrder<'info> {
 pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
     let market = &mut ctx.accounts.market;
     let user_trade = &mut ctx.accounts.user_trade;
-
+    let leverage = args.leverage //get leverage, 1(normal) or 2(double)
     let ts = Clock::get()?.unix_timestamp;
 
     require!(market.is_active, TriadProtocolError::MarketInactive);
@@ -72,10 +72,10 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
 
     let fee_amount = ((args.amount * (market.fee_bps as u64)) / 100000) as u64;
     let net_amount = args.amount.saturating_sub(fee_amount);
-
+    let net_amount_leverage = net_amount.checked_mul(leverage).unwrap(); // setting new leveraged amount
     require!(net_amount > current_price, TriadProtocolError::InsufficientFunds);
-
-    let new_directional_liquidity = current_liquidity.checked_add(net_amount).unwrap();
+    
+    let new_directional_liquidity = current_liquidity.checked_add(net_amount_leverage).unwrap();
     let markets_liquidity = new_directional_liquidity
         .checked_add(otherside_current_liquidity)
         .unwrap();
@@ -87,7 +87,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
         .unwrap()
         .clamp(1, 999_999);
 
-    let total_shares = net_amount.checked_mul(1_000_000).unwrap().checked_div(new_price).unwrap();
+    let total_shares = net_amount_leverage.checked_mul(1_000_000).unwrap().checked_div(new_price).unwrap();
 
     if total_shares.eq(&0) {
         return Err(TriadProtocolError::InsufficientFunds.into());
@@ -116,7 +116,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
     user_trade.total_deposits = user_trade.total_deposits.checked_add(net_amount).unwrap();
 
     market.opened_orders = market.opened_orders.checked_add(1).unwrap();
-    market.volume = market.volume.checked_add(net_amount).unwrap();
+    market.volume = market.volume.checked_add(net_amount_leverage).unwrap();
     market.update_ts = ts;
 
     // Update market shares
