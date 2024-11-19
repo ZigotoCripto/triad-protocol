@@ -69,6 +69,7 @@ pub enum OrderType {
 pub struct OpenOrderArgs {
     pub amount: u64,
     pub direction: OrderDirection,
+    pub leverage: u64,
 }
 
 impl UserTrade {
