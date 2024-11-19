@@ -110,6 +110,7 @@ pub fn open_order(ctx: Context<OpenOrder>, args: OpenOrderArgs) -> Result<()> {
         order_type: OrderType::Market,
         direction: args.direction,
         padding: [0; 32],
+        leverage: args.leverage,
     };
 
     user_trade.opened_orders = user_trade.opened_orders.checked_add(1).unwrap();
